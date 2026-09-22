@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { whatsappUrl } from '../config'
+import { instagramDirectUrl } from '../config'
 import logo from '../assets/logo.png'
 import './Navbar.css'
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const contact = whatsappUrl()
+  const contact = instagramDirectUrl
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
@@ -50,7 +50,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Falar com a Rituá ↗
+                Falar pelo direct ↗
               </a>
             </li>
           )}

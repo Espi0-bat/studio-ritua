@@ -1,9 +1,9 @@
-import { instagramUrl, whatsappUrl } from '../config'
+import { instagramUrl, instagramDirectUrl } from '../config'
 import logo from '../assets/logo.png'
 import './Footer.css'
 
 export default function Footer() {
-  const contact = whatsappUrl()
+  const contact = instagramDirectUrl
   const year = new Date().getFullYear()
 
   return (
@@ -12,7 +12,7 @@ export default function Footer() {
 
         <div className="footer__brand">
           <a href="#inicio" className="footer__logo brand"><img src={logo} alt="Studio Rituá — início" width="1024" height="1024" loading="lazy" /></a>
-          <p>Cuias feitas à mão em cerâmica plástica.</p>
+          <p>Piteiras, cases e cuias para o seu ritual.</p>
         </div>
 
         <nav className="footer__links" aria-label="Navegação do rodapé">
@@ -26,7 +26,7 @@ export default function Footer() {
             <p>A conversa continua por aqui.</p>
             {contact && (
               <a href={contact} target="_blank" rel="noopener noreferrer">
-                WhatsApp <span aria-hidden="true">↗</span>
+                Falar pelo direct <span aria-hidden="true">↗</span>
               </a>
             )}
             {instagramUrl && (

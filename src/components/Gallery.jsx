@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { whatsappUrl } from '../config'
+import { instagramDirectUrl, instagramUrl } from '../config'
+import piteiraExample from '../assets/images/piteira-exemplo-mona-brisa.jpg'
 import photo1672 from '../assets/images/ritua-1672.webp'
 import photo2200 from '../assets/images/ritua-2200.webp'
 import photo2219 from '../assets/images/ritua-2219.webp'
@@ -12,23 +13,13 @@ import ProductCarousel from './ProductCarousel'
 // src/assets/videos/ and use media: { type: 'video', src: videoFile, poster: photo }.
 // These photos show groups of pieces, not confirmed individual SKUs. Preserve
 // their descriptive names until the client provides the product/photo mapping.
-// DEMO DATA: measures, model names and prices below are illustrative, as requested.
-// Replace them with the client's values and set illustrative: false per product.
-// Comparable cuia references (consulted 2026-09-21; NOT specs of Rituá products):
-// https://www.mobydickheadshop.com.br/produtos/cuia-elevation-laranja-print-d0dl7/ (7 cm)
-// https://www.culturadab.com.br/produtos/cuia-de-ceramica-plastica-i-darko-edition1/ (7.5–8 x 3.5–4 cm)
-// https://www.loubackstreet.com.br/cuias/ (R$100 small, R$120 medium)
-// https://www.loubackstreet.com.br/produtos/cuia-de-ceramica-artesanal-grande-5gle9/ (R$140)
-// Case measurements/price are fictional layout values, not taken from cuia specs.
-const products = [
+const cuias = [
   {
     id: 'cores-em-mistura',
     media: { type: 'image', src: photo2200, width: 844, height: 1500 },
     gridLabel: 'Cores em mistura', title: 'Cores em mistura', tag: 'Cuias · Studio Rituá',
     subtitle: 'Cuias facetadas, com cores mescladas, fotografadas em luz natural.',
     alt: 'Sete cuias coloridas em rosa, azul, laranja e vinho sobre uma mesa de madeira',
-    specs: { 'Diâmetro': '7 cm', Altura: '3,5 cm', Cor: 'Rosa, azul, laranja e vinho', Modelo: 'Facetada' },
-    price: 'R$ 120,00', illustrative: true, available: null,
   },
   {
     id: 'entre-rosas-e-laranjas',
@@ -36,8 +27,6 @@ const products = [
     gridLabel: 'Entre rosas e laranjas', title: 'Entre rosas e laranjas', tag: 'Cuias · Studio Rituá',
     subtitle: 'Combinações de cores vistas de cima, entre folhas verdes.',
     alt: 'Cuias rosas, vermelhas e laranjas com bordas facetadas sobre folhagens',
-    specs: { 'Diâmetro': '8 cm', Altura: '4 cm', Cor: 'Rosa, vermelho e laranja', Modelo: 'Facetada' },
-    price: 'R$ 140,00', illustrative: true, available: null,
   },
   {
     id: 'um-canto-do-ritual',
@@ -45,8 +34,6 @@ const products = [
     gridLabel: 'Um canto do ritual', title: 'Um canto do ritual', tag: 'Cuias · Studio Rituá',
     subtitle: 'Uma cuia rosa entre os objetos da mesa, sob luz colorida.',
     alt: 'Cuia rosa sobre uma bandeja com acessórios, iluminada em rosa e roxo',
-    specs: { 'Diâmetro': '7 cm', Altura: '3,5 cm', Cor: 'Rosa, sob luz colorida', Modelo: 'Mesclada' },
-    price: 'R$ 100,00', illustrative: true, available: null,
   },
   {
     id: 'detalhes-sobre-a-mesa',
@@ -54,8 +41,6 @@ const products = [
     gridLabel: 'Detalhes sobre a mesa', title: 'Detalhes sobre a mesa', tag: 'Peças · Studio Rituá',
     subtitle: 'Cuias e acessórios lado a lado: cores mescladas e detalhes modelados. Os cases de isqueiro desta foto estão esgotados.',
     alt: 'Cuias verdes e rosas ao lado de acessórios com cogumelos e desenhos figurativos',
-    specs: { 'Diâmetro': '8 cm', Altura: '4 cm', Cor: 'Verde e rosa', Modelo: 'Cuia facetada' },
-    price: 'R$ 140,00', illustrative: true, available: null,
   },
   {
     id: 'sob-outra-luz',
@@ -63,20 +48,30 @@ const products = [
     gridLabel: 'Sob outra luz', title: 'Sob outra luz', tag: 'Cuias · Studio Rituá',
     subtitle: 'As cores das cuias sob iluminação azul.',
     alt: 'Conjunto de cuias coloridas fotografado sob luz azul intensa',
-    specs: { 'Diâmetro': '7,5 cm', Altura: '3,5 cm', Cor: 'Variadas, sob luz azul', Modelo: 'Facetada' },
-    price: 'R$ 120,00', illustrative: true, available: null,
+  },
+
+]
+
+const featured = [
+  {
+    id: 'piteira-exemplo',
+    media: { type: 'image', src: piteiraExample, width: 1000, height: 1000 },
+    gridLabel: 'Piteiras', title: 'Mona Brisa · Cápsula Coração', tag: 'Piteiras · Modelo de exemplo',
+    subtitle: 'Uma referência para conhecer os detalhes de uma piteira. As piteiras da Rituá estão para chegar; os modelos da seleção serão apresentados em breve.',
+    alt: 'Piteira de vidro Mona Brisa Cápsula Coração, modelo de exemplo da Madruga Shop',
+    status: 'Em breve · exemplo',
+    specs: { Comprimento: '113 mm (11,3 cm)', 'Diâmetro informado': '4,8 mm' },
+    reference: 'https://www.madrugashop.com/acessorios-headshop/piteiras-de-vidro/piteira-de-vidro-mona-brisa-capsula-coracao',
   },
   {
-    id: 'outras-formas',
+    id: 'outras-formas', available: false,
     media: { type: 'image', src: photo9895, width: 1125, height: 1500 },
     gridLabel: 'Outras formas', title: 'Cases de isqueiro', tag: 'Acessórios · Studio Rituá',
     subtitle: 'Cases de isqueiro com pequenos detalhes em relevo. As unidades desta seleção acabaram.',
     alt: 'Cases de isqueiro coloridos decorados com cogumelos, rostos e personagens sobre uma mesa clara',
-    specs: { Comprimento: '8 cm', Largura: '3 cm', Cor: 'Variadas, conforme a peça', Modelo: 'Case de isqueiro' },
-    price: 'R$ 60,00', illustrative: true, available: false,
-    whatsappMsg: 'Olá! Vi que os cases de isqueiro da seleção “Outras formas” estão esgotados. Vocês têm previsão de novas peças?',
   },
 ]
+const products = [...featured, ...cuias]
 
 function ProductMedia({ product, detail = false, reducedMotion }) {
   const { media, alt } = product
@@ -116,25 +111,40 @@ export default function Gallery() {
     }
   }, [selected])
   const product = products.find(item => item.id === selected)
-  const contact = product ? whatsappUrl(product.whatsappMsg || `Olá! Vi “${product.title}” no site da Rituá. Gostaria de consultar disponibilidade, valores e medidas das peças dessa foto.`) : null
+  const contact = product?.reference ? instagramUrl : instagramDirectUrl
   return (
     <section id="galeria" className="gallery section">
       <div className="container">
         <div className="gallery__heading">
-          <div><p className="eyebrow">As peças</p><h2>Conheça as cuias.</h2></div>
-          <p>Um pouco do que fazemos por aqui.<br />Abra as fotos para consultar os detalhes.</p>
+          <div><p className="eyebrow">As peças</p><h2>Os detalhes do seu ritual.</h2></div>
+          <p>Piteiras a caminho. Cases esperando uma nova coleção.<br />Conheça o universo da Rituá.</p>
         </div>
-        <ProductCarousel items={products} reducedMotion={reducedMotion} renderItem={(item, index, duplicate) => (
+        <div className="gallery__featured">
+          {featured.map(item => (
+            <article className="gallery__feature" key={item.id}>
+              <button className="gallery__open" onClick={event => { trigger.current = event.currentTarget; setSelected(item.id) }} aria-haspopup="dialog" aria-label={`Ver detalhes: ${item.gridLabel}`}>
+                <ProductMedia product={item} reducedMotion={reducedMotion} />
+                <span className="gallery__stock">{item.status || 'Indisponível'}</span>
+                <span className="gallery__zoom">Ver detalhes ↗</span>
+              </button>
+              <h3>{item.gridLabel === 'Outras formas' ? 'Cases de isqueiro' : item.gridLabel}</h3>
+              <p>{item.reference ? 'Piteiras em breve. A peça da foto é um modelo de exemplo.' : 'As últimas peças foram vendidas. Novos cases serão apresentados por aqui.'}</p>
+            </article>
+          ))}
+        </div>
+        <div className="gallery__heading gallery__cuia-heading">
+          <div><p className="eyebrow">Também fazem parte do ritual</p><h2>Nossas cuias.</h2></div>
+          <p>Feitas à mão em cerâmica plástica, com combinações de cores e detalhes que expressam o universo da Rituá.</p>
+        </div>
+        <ProductCarousel items={cuias} reducedMotion={reducedMotion} renderItem={(item, index, duplicate) => (
           <>
             <button className="gallery__open" tabIndex={duplicate ? -1 : 0}
-              onClick={(event) => {
+              onClick={event => {
                 trigger.current = event.currentTarget.closest('.gallery__track').querySelector(`[data-carousel-copy="1"][data-carousel-index="${index}"] button`)
                 setSelected(item.id)
-              }}
-              aria-label={`Ver detalhes: ${item.gridLabel}${item.available === false ? ' — cases esgotados' : ''}`} aria-haspopup="dialog">
+              }} aria-label={`Ampliar foto: ${item.gridLabel}`} aria-haspopup="dialog">
               <ProductMedia product={item} reducedMotion={reducedMotion} />
-              {item.available === false && <span className="gallery__stock">Cases esgotados</span>}
-              <span className="gallery__zoom" aria-hidden="true">Ver detalhes ↗</span>
+              <span className="gallery__zoom" aria-hidden="true">Ampliar foto ↗</span>
             </button>
             <figcaption><span className="gallery__number">0{index + 1}</span><h3>{item.gridLabel}</h3></figcaption>
           </>
@@ -152,19 +162,16 @@ export default function Gallery() {
             <p className="eyebrow">{product.tag}</p>
             <h2 id="photo-title">{product.title}</h2>
             <p id="photo-description" className="gallery__subtitle">{product.subtitle}</p>
-            {product.available === false && <p className="gallery__availability">Cases esgotados</p>}
-            <dl className="gallery__specs" aria-label="Especificações das peças">
+            {product.available === false && <p className="gallery__availability">Indisponível</p>}
+            {product.specs && <dl className="gallery__specs" aria-label="Especificações das peças">
               {Object.entries(product.specs).map(([label, value]) => (
                 <div className="gallery__spec-row" key={label}>
                   <dt>{label}</dt><dd>{value ?? 'Sob consulta'}</dd>
                 </div>
               ))}
-            </dl>
-            {product.illustrative && <p className="gallery__reference">Medidas e preço ilustrativos para esta prévia.</p>}
-            <p className={`gallery__price${product.price === null ? ' gallery__price--consult' : ''}`}>
-              {product.price ?? 'Consulte o valor'}
-            </p>
-            {contact && <a className="btn" href={contact} target="_blank" rel="noopener noreferrer">{product.available === false ? 'Perguntar sobre reposição' : 'Consultar disponibilidade'} <span aria-hidden="true">↗</span></a>}
+            </dl>}
+            {product.reference && <p className="gallery__reference">Modelo de exemplo, sem disponibilidade na Rituá. Foto e medidas: <a href={product.reference} target="_blank" rel="noopener noreferrer">Madruga Shop</a>. A referência não especifica se o diâmetro é interno ou externo.</p>}
+            <a className="btn" href={contact} target="_blank" rel="noopener noreferrer">{product.reference ? 'Acompanhar no Instagram' : 'Falar pelo direct'} <span aria-hidden="true">↗</span></a>
           </div>
         </div>}
       </dialog>

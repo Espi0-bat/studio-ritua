@@ -18,7 +18,7 @@ export default function About() {
               <span>uma a uma</span>
             </div>
           </div>
-          <p>Cor misturada, forma criada, uma peça de cada vez. É assim que as cuias ganham vida aqui na Rituá.</p>
+          <p>Cor misturada, forma criada, uma peça de cada vez. É assim que as cuias e os cases ganham vida aqui na Rituá.</p>
           <p>Trabalhamos a cerâmica plástica à mão, explorando combinações que carregam o nosso jeito de criar. Dos desenhos nas bordas aos pequenos relevos, o cuidado mora nos detalhes.</p>
           <a href="#galeria" className="text-link">Veja os detalhes nas fotos <span aria-hidden="true">↗</span></a>
         </div>

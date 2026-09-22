@@ -1,17 +1,17 @@
 import './Ticker.css'
 
 const items = [
-  'Cerâmica plástica',
+  'Piteiras',
   '✦',
-  'Feita à mão',
+  'Cases de isqueiro',
   '✦',
-  'Edição limitada',
+  'Cuias',
   '✦',
   'Seu ritual',
   '✦',
-  'Sem reposição',
+  'Cor e personalidade',
   '✦',
-  'Drops exclusivos',
+  'Nos detalhes',
   '✦',
   'Studio Rituá',
   '✦',

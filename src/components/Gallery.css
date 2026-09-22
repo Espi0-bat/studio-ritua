@@ -386,3 +386,16 @@
     font-size: 9px;
   }
 }
+.gallery__featured { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.gallery__feature h3 { font-family: var(--font-display); color: var(--cherry); font-size: 30px; font-weight: 400; margin: 20px 0 10px; }
+.gallery__feature > p { font-size: 15px; line-height: 1.7; max-width: 420px; }
+.gallery__featured .gallery__open img { aspect-ratio: 1; }
+.gallery__cuia-heading { margin-top: 80px; }
+.gallery__reference a { text-decoration: underline; }
+@media (max-width: 600px) {
+  .gallery__featured { grid-template-columns: 1fr; gap: 36px; }
+  .gallery__feature h3 { font-size: 26px; }
+  .gallery__cuia-heading { margin-top: 56px; }
+}
+
+.gallery__featured .gallery__feature:first-child .gallery__open img { object-fit: contain; background: white; }
