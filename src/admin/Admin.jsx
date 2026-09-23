@@ -3,10 +3,11 @@ import { demoCatalog } from '../services/demoCatalog'
 import { actionLabels, categories, statusOf } from '../services/inventory'
 import { preparePhotos } from './photos'
 import Gallery from '../components/Gallery'
-import { toGalleryProduct } from '../services/catalogSections'
+import { normalizeDetails } from '../services/productDetails'
+import { catalogSections, toGalleryProduct } from '../services/catalogSections'
 import './Admin.css'
 const money = cents => (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-const blank = () => ({ name: '', category: 'Cuia', priceCents: 0, description: '', photos: [], published: false, quantity: 1 })
+const blank = () => ({ name: '', category: '', priceCents: 0, description: '', photos: [], published: false, quantity: 1 })
 function Modal({ title, children, onClose, busy }) {
   const ref = useRef(null)
   useEffect(() => { const dialog = ref.current; dialog.showModal(); return () => dialog.close() }, [])
@@ -27,7 +28,7 @@ function Editor({ initial, onClose, onSave, live }) {
     if (guard.current) return
     guard.current = true; setBusy(true); setError('')
     try {
-      const input = { ...form, priceCents: Math.round(Number(price.replace(',', '.')) * 100) }
+      const input = { ...form, ...normalizeDetails(form), priceCents: Math.round(Number(price.replace(',', '.')) * 100) }
       const signature = JSON.stringify(input)
       if (request.current?.signature !== signature) request.current = { signature, id: crypto.randomUUID() }
       await onSave(input, initial.revision, request.current.id); onClose()
@@ -45,10 +46,26 @@ function Editor({ initial, onClose, onSave, live }) {
   return <Modal title={form.id ? 'Editar peça' : 'Nova peça'} onClose={onClose} busy={busy}>
     <form onSubmit={submit}><fieldset disabled={busy}>
       <label>Nome da peça<input autoFocus required maxLength={100} value={form.name} onChange={e => change('name', e.target.value)} placeholder="Ex.: Cuia Aurora" /></label>
-      <div className="admin-fields"><label>Tipo de produto<select value={form.category} onChange={e => change('category', e.target.value)}>{categories.map(c => <option key={c}>{c}</option>)}</select></label>
+      <div className="admin-fields"><label>Tipo de produto<select required value={form.category} onChange={e => change('category', e.target.value)}><option value="" disabled>Selecione o tipo</option>{categories.map(c => <option key={c}>{c}</option>)}</select></label>
       <label>Preço (R$)<input type="number" min="0" step="0.01" required value={price} onChange={e => setPrice(e.target.value)} /></label></div>
-      <p className="admin-help">O tipo escolhido coloca a peça automaticamente na seção correspondente da vitrine.</p>
+      <p className="admin-help">{form.category ? `Esta peça aparecerá em ${catalogSections.find(section => section.category === form.category)?.title.replace(/\.$/, '')}.` : 'Escolha o tipo para definir a seção da peça na vitrine.'}</p>
       <label>Descrição<textarea rows={3} maxLength={2000} value={form.description} onChange={e => change('description', e.target.value)} placeholder="Cores, materiais e detalhes da peça" /></label>
+      <label className="admin-check"><input type="checkbox" checked={Boolean(form.isUnique)} onChange={e => change('isUnique', e.target.checked)} />Peça única</label>
+      {form.category === 'Piteira' && <>
+        <div className="admin-fields">
+          <label>Comprimento (cm)<input inputMode="decimal" value={form.lengthCm ?? ''} onChange={e => change('lengthCm', e.target.value)} placeholder="Ex.: 11,3" /></label>
+          <label>Modelo<input maxLength={120} value={form.model ?? ''} onChange={e => change('model', e.target.value)} placeholder="Nome do modelo" /></label>
+        </div>
+        <div className="admin-fields">
+          <label>Diâmetro<input inputMode="decimal" value={form.diameter ?? ''} onChange={e => change('diameter', e.target.value)} placeholder="Ex.: 4,8" /></label>
+          <label>Unidade do diâmetro<select value={form.diameterUnit ?? ''} onChange={e => change('diameterUnit', e.target.value)}><option value="">Selecione a unidade</option><option value="mm">mm</option><option value="cm">cm</option></select></label>
+        </div>
+        <p className="admin-help">Medidas e modelo são opcionais. Preencha somente as informações confirmadas da peça.</p>
+      </>}
+      {form.category === 'Case' && <>
+        <label>Compatível com<input maxLength={200} value={form.compatibleWith ?? ''} onChange={e => change('compatibleWith', e.target.value)} placeholder="Marca, modelo ou tamanho do isqueiro" /></label>
+        <label>Acompanha isqueiro?<select value={form.includesLighter == null ? '' : String(form.includesLighter)} onChange={e => change('includesLighter', e.target.value === '' ? null : e.target.value === 'true')}><option value="">Não informado</option><option value="true">Sim</option><option value="false">Não</option></select></label>
+      </>}
       {!form.id && <label>Quantidade inicial<input type="number" min="0" max="9999" step="1" required value={form.quantity} onChange={e => change('quantity', e.target.value)} /></label>}
       <label>Fotos · até 4<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={upload} /></label>
       <p className="admin-help">JPG, PNG ou WebP. A primeira foto será a capa.</p>

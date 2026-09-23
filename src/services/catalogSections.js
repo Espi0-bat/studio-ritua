@@ -1,3 +1,4 @@
+import { productSpecs } from './productDetails.js'
 import { statusOf } from './inventory.js'
 export const catalogSections = [
   { category: 'Case', title: 'Cases de isqueiro', description: 'Cases de isqueiro com pequenos detalhes em relevo.' },
@@ -9,7 +10,7 @@ export function groupCatalog(products) {
 }
 export function toGalleryProduct(p) {
   return { id: p.id, category: p.category, published: p.published, gridLabel: p.name, title: p.name,
-    tag: `${p.category} · Studio Rituá`, subtitle: p.description, alt: p.name, priceCents: p.priceCents,
+    tag: `${p.category}${p.isUnique ? ' · Peça única' : ''} · Studio Rituá`, specs: productSpecs(p), subtitle: p.description, alt: p.name, priceCents: p.priceCents,
     media: p.photos[0] ? { type: 'image', src: p.photos[0] } : null,
     status: statusOf(p), available: p.stock - p.reserved > 0 }
 }

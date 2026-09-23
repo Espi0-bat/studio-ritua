@@ -91,7 +91,6 @@ export default function Gallery({ products = staticProducts, preview = false }) 
             <h2 id="photo-title">{product.title}</h2>
             <p id="photo-description" className="gallery__subtitle">{product.subtitle}</p>
             {product.available === false && <p className="gallery__availability">Indisponível</p>}
-            {Number.isInteger(product.priceCents) && <p className="gallery__price">{formatPrice(product.priceCents)}</p>}
             {product.specs && <dl className="gallery__specs" aria-label="Especificações das peças">
               {Object.entries(product.specs).map(([label, value]) => (
                 <div className="gallery__spec-row" key={label}>
@@ -99,6 +98,7 @@ export default function Gallery({ products = staticProducts, preview = false }) 
                 </div>
               ))}
             </dl>}
+            {Number.isInteger(product.priceCents) && <p className="gallery__price">{formatPrice(product.priceCents)}</p>}
             {product.reference && <p className="gallery__reference">Modelo de exemplo, sem disponibilidade na Rituá. Foto e medidas: <a href={product.reference} target="_blank" rel="noopener noreferrer">Madruga Shop</a>. A referência não especifica se o diâmetro é interno ou externo.</p>}
             <a className="btn" href={contact} target="_blank" rel="noopener noreferrer">{product.reference ? 'Acompanhar no Instagram' : 'Falar pelo direct'} <span aria-hidden="true">↗</span></a>
           </div>

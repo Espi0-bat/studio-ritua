@@ -1,3 +1,4 @@
+import { normalizeDetails } from './productDetails.js'
 import { supabase } from './supabase'
 import { categories } from './inventory'
 const bucket = 'ritua-products'
@@ -31,6 +32,8 @@ async function load(publicOnly = false) {
   return { products: rows.map(p => {
     const productPhotos = photos.filter(photo => photo.product_id === p.id)
     return { id: p.id, name: p.name, category: p.category, description: p.description, priceCents: p.price_cents,
+      isUnique: p.is_unique, lengthCm: p.length_cm, diameter: p.diameter, diameterUnit: p.diameter_unit,
+      model: p.model, compatibleWith: p.compatible_with, includesLighter: p.includes_lighter,
       published: p.published, stock: p.stock, reserved: p.reserved, revision: p.revision,
       photos: productPhotos.map(photo => urls[photo.object_path]),
       photoMap: Object.fromEntries(productPhotos.map(photo => [urls[photo.object_path], photo.object_path])) }
@@ -47,6 +50,7 @@ export const liveCatalog = {
     if (!Number.isSafeInteger(input.priceCents) || input.priceCents < 0 || input.priceCents > 2147483647) throw new Error('Informe um preço válido.')
     if (input.photos.length > 4) throw new Error('Escolha até quatro fotos.')
     if (!input.id && (!Number.isInteger(Number(input.quantity)) || Number(input.quantity) < 0 || Number(input.quantity) > 9999)) throw new Error('Confira a quantidade inicial.')
+    const details = normalizeDetails(input)
     const paths = []
     for (const [index, photo] of input.photos.entries()) {
       const existing = input.photoMap?.[photo]
@@ -61,7 +65,7 @@ export const liveCatalog = {
       if (error && !['409', 'Duplicate'].includes(String(error.statusCode || error.error))) fail(error)
       paths.push(path)
     }
-    const payload = { id: input.id || null, name, category: input.category, description: input.description,
+    const payload = { ...details, id: input.id || null, name, category: input.category, description: input.description,
       priceCents: input.priceCents, published: input.published, photos: paths, revision: revision ?? null, quantity: input.id ? 0 : Number(input.quantity) }
     const { error } = await supabase.rpc('ritua_save_product', { payload, operation_id: operationId }); fail(error)
     const removed = Object.values(input.photoMap || {}).filter(path => path.startsWith(`${id}/`) && !paths.includes(path))

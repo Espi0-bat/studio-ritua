@@ -29,7 +29,7 @@ As peças publicadas no banco aparecem automaticamente em cases, piteiras ou cui
 
 ## Migrações e configuração
 
-As migrações `202609230001_catalog.sql` e `202609230002_live_catalog.sql` foram aplicadas via `supabase db query --linked --project-ref ... --file ...`. Não reaplicar esses arquivos em banco existente: a execução direta não registra automaticamente o histórico do comando `db push`. Novas mudanças devem ter novas migrações; antes de adotar `db push`, registrar as versões já aplicadas com o mecanismo de reparação do CLI.
+As migrações `202609230001_catalog.sql`, `202609230002_live_catalog.sql` e `202609230003_product_details.sql` foram aplicadas via `supabase db query --linked --project-ref ... --file ...`. Não reaplicar esses arquivos em banco existente: a execução direta não registra automaticamente o histórico do comando `db push`. Novas mudanças devem ter novas migrações; antes de adotar `db push`, registrar as versões já aplicadas com o mecanismo de reparação do CLI.
 
 `supabase/config.toml` mantém o endereço do site e os retornos locais/autenticados. `supabase config push` foi usado para configurar os retornos e a expiração do link, preservando MFA e o intervalo de envio. O plano gratuito com remetente padrão rejeitou a personalização do template; usamos os templates padrão, sem exigir upgrade. O serviço padrão tem limites de envio e elegibilidade de destinatários; a entrega real na caixa de entrada precisa ser conferida pelos usuários autorizados. Nenhum teste automatizado deve enviar e-mail sem autorização explícita.
 
@@ -38,3 +38,10 @@ As migrações `202609230001_catalog.sql` e `202609230002_live_catalog.sql` fora
 `npm test` verifica estoque e classificação. O build é `npm run build -- --base=/studio-ritua/`, com `.env.local` configurado. Testes SQL locais usam PGlite com Auth/Storage simulados; testes reais devem cobrir usuário administrador, visitante, rascunhos/fotos, publicação, concorrência, repetição, reversão e saída. Nunca deixar peças de teste publicadas depois da verificação.
 
 Referências: https://supabase.com/docs/guides/database/functions, https://supabase.com/docs/guides/database/postgres/row-level-security, https://supabase.com/docs/guides/storage/security/access-control, https://supabase.com/docs/guides/auth/auth-email-passwordless.
+
+
+## Ficha técnica
+
+A terceira migração adiciona campos opcionais: `is_unique`, `length_cm`, `diameter`, `diameter_unit`, `model`, `compatible_with` e `includes_lighter`. Medidas devem ser positivas e até 10.000; o diâmetro exige unidade cm/mm. Textos têm limite de 120 caracteres para modelo e 200 para compatibilidade. A inclusão do isqueiro distingue null (não informado), true e false. Peça única não modifica saldo.
+
+A RPC mantém valores omitidos por clientes antigos e aceita null para limpar explicitamente. Ao trocar de tipo, limpa campos incompatíveis na mesma transação. Produtos antigos recebem null, sem inferir medidas ou características. O novo frontend exige a seleção do tipo em cadastros novos e aceita vírgula decimal na interface.

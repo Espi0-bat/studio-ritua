@@ -172,3 +172,95 @@ O painel ainda usa dados locais de demonstração. A integração do catálogo r
 - [ ] Retirar a autorização temporária do usuário depois da aprovação dos testes, conforme solicitado.
 
 O teste de login usou geração de link pela API administrativa sem envio de mensagem. Nenhuma chave secreta foi incluída no código ou no Git. A galeria pública consulta novidades ao abrir, ao voltar à aba e a cada minuto. As fotos editoriais antigas continuam separadas dos produtos gerenciados no painel.
+
+## 14. Novo feedback da Duda — ficha técnica e classificação dos produtos
+
+**Status: implementado e validado.** Campos integrados ao painel, demonstração, Supabase e ficha pública. Publicação incluída nesta entrega.
+
+### 14.1. Pedidos identificados nos prints
+
+1. Permitir indicar se o produto é uma **peça única**, na identificação curta acima do nome (hoje “PITEIRA · STUDIO RITUÁ”).
+2. Acrescentar às piteiras os campos **comprimento**, **diâmetro** e **modelo**.
+3. Acrescentar aos cases os campos **compatível com** e **acompanha isqueiro**.
+4. Corrigir o caso do produto “Case Cogumelo”, que apareceu em “Nossas cuias.” e com a identificação “CUIA · STUDIO RITUÁ”.
+
+Preservar a identidade visual, a apresentação das cuias, a ordem cases → piteiras → cuias, os carrosséis laterais circulares, as fotos, os preços e o botão de contato. Os prints não solicitam reformulação do layout nem uma nova categoria “Isqueiro”: a peça apresentada é um case, e a inclusão do isqueiro deve ser uma informação própria.
+
+### 14.2. Prioridade 1 — tornar explícita a escolha do tipo
+
+**Constatação no código:** o formulário de produto novo começa com `category: 'Cuia'` em `src/admin/Admin.jsx`. A seção e a identificação do detalhe usam o mesmo campo `category` em `src/services/catalogSections.js`.
+
+Isso é compatível com o print: um case cadastrado sem trocar o tipo seria mostrado como cuia. É uma hipótese sustentada pelo código, não uma confirmação de como a Duda preencheu o formulário. Antes de corrigir o registro, consultar a categoria salva no Supabase e reproduzir o cadastro. Não classificar automaticamente pelo nome ou pela foto.
+
+- [x] Fazer produtos novos começarem com “Selecione o tipo”, sem categoria pré-selecionada.
+- [x] Exigir uma escolha entre Case, Piteira e Cuia antes de salvar.
+- [x] Mostrar uma orientação curta após a seleção: por exemplo, “Esta peça aparecerá em Cases de isqueiro”.
+- [x] Manter a categoria atual ao editar ou duplicar uma peça, deixando o seletor visível.
+- [x] Conferir o registro “Case Cogumelo”; se estiver salvo como Cuia, corrigir somente seu tipo para Case, preservando fotos, preço, descrição e histórico de estoque.
+- Alternativa não necessária: a consulta confirmou o tipo Cuia no registro. Não houve evidência de falha no agrupamento.
+
+**Aceite:** a mesma categoria aparece no cadastro, na seção pública e na identificação do detalhe. Alterar o tipo move a peça entre as seções sem duplicar o cadastro.
+
+### 14.3. Prioridade 2 — campos específicos no cadastro
+
+Mostrar os campos conforme o tipo selecionado, para não sobrecarregar o formulário.
+
+| Aplicação | Campo no painel | Comportamento proposto |
+| --- | --- | --- |
+| Todos os tipos | Peça única | Marcação opcional; quando marcada, acrescentar “Peça única” à identificação acima do nome. Desmarcada, não exibir uma frase negativa. |
+| Piteira | Comprimento (cm) | Número decimal positivo, opcional. Aceitar entrada com vírgula e apresentar a unidade no site. |
+| Piteira | Diâmetro | Número decimal positivo com unidade explícita, cm ou mm. Não inferir se a medida é interna ou externa. |
+| Piteira | Modelo | Texto curto opcional; não criar uma lista fechada sem os modelos reais fornecidos pela Duda. |
+| Case | Compatível com | Texto curto opcional para marca/modelo/tamanho do isqueiro, conforme informação da Duda. |
+| Case | Acompanha isqueiro? | Seleção “Não informado”, “Sim” ou “Não”. Não assumir “Não” nos cadastros antigos. |
+| Cuia | Sem campos técnicos novos nesta etapa | Manter os campos atuais e oferecer a indicação de peça única. |
+
+“Peça única” é uma informação editorial, independente do saldo atual: um produto com estoque 1 não deve ser marcado automaticamente como único. A marcação também não deve alterar estoque, reservas ou vendas.
+
+As unidades e o formato de “Modelo” acima são propostas de interface. O pedido confirmado é poder informar as medidas e o modelo; os prints não definem a unidade do diâmetro nem uma lista de opções para modelo.
+
+### 14.4. Prioridade 3 — apresentação nos detalhes
+
+- [x] Usar a área já existente de especificações (`gallery__specs`) em `src/components/Gallery.jsx`, sem criar um novo desenho para o modal.
+- [x] Apresentar os dados entre a descrição e o preço, seguidos do botão de contato.
+- [x] Piteira: Comprimento, Diâmetro e Modelo, nessa ordem.
+- [x] Case: Compatível com e Acompanha isqueiro, nessa ordem.
+- [x] Mostrar somente informações preenchidas; preservar valores explícitos como “Não” para a inclusão do isqueiro.
+- [x] Usar uma identificação como “PITEIRA · PEÇA ÚNICA · STUDIO RITUÁ” quando a marcação estiver ativa; manter a identificação atual quando não estiver.
+- [x] Permitir quebra de linha dessa identificação no celular sem encobrir o nome do produto.
+- [x] Ao trocar o tipo, renderizar e validar somente os campos aplicáveis à categoria atual; não exibir medidas de piteira em um case.
+
+### 14.5. Persistência e compatibilidade
+
+- [x] Criar uma **nova migração** Supabase, sem reaplicar as migrações já executadas.
+- [x] Adicionar campos opcionais para peça única, comprimento em cm, valor/unidade de diâmetro, modelo, compatibilidade e inclusão do isqueiro. Cadastros antigos permanecem sem informação técnica até edição.
+- [x] Atualizar `ritua_save_product` para salvar os campos na mesma transação, preservando autorização, revisão concorrente e idempotência.
+- [x] Validar números positivos, combinações de valor/unidade e limites dos textos também no banco.
+- [x] Atualizar leitura e gravação em `src/services/liveCatalog.js`, formulário/duplicação em `src/admin/Admin.jsx` e montagem de `tag`/`specs` em `src/services/catalogSections.js`.
+- [x] Atualizar o modo de demonstração e sua validação em `src/services/demoCatalog.js` e `src/services/inventory.js`, aceitando registros locais antigos sem os novos campos.
+- [x] Incluir os campos na exportação e preservá-los ao editar estoque ou duplicar produtos.
+- [x] Manter intactas as especificações e referências dos exemplos editoriais já existentes no site.
+
+### 14.6. Sequência de execução e conferência
+
+1. Conferir o tipo salvo do case apontado e ajustar o formulário para exigir seleção explícita.
+2. Preparar a migração e as validações para os novos campos opcionais.
+3. Atualizar formulário, adaptadores e demonstração.
+4. Exibir ficha técnica e identificação de peça única nos detalhes.
+5. Testar cadastro e edição de cada tipo, troca de categoria, duplicação, vírgula decimal, campos vazios, unidade do diâmetro e os três estados de “Acompanha isqueiro”.
+6. Testar cadastros antigos, persistência após recarregar, conflitos de edição e manutenção do estoque/histórico.
+7. Conferir celular e desktop: identificação longa, especificações, preço, contato e carrosséis. A marcação de peça única não pode alterar a disponibilidade.
+8. Aplicar a migração antes de publicar o frontend que depende dos campos novos; verificar no banco real com registros de teste identificados e limpar somente esses registros.
+9. Publicar a atualização e conferir os dois exemplos apontados pela Duda, sem inventar medidas ou compatibilidade ausentes nos prints.
+
+**Fora deste pedido:** alterar regras de preço/estoque por ser peça única, classificar produtos pelo nome/foto, cadastrar novas categorias, redesenhar o site ou remover o acesso temporário de testes antes da aprovação combinada.
+
+
+### 14.7. Resultado da implementação
+
+- Confirmado no banco: “Case Cogumelo” estava com categoria Cuia. Corrigido para Case, alterando somente o tipo (e a revisão automática), sem modificar fotos, descrição, preço ou histórico.
+- Criada e aplicada a migração `202609230003_product_details.sql`. Clientes antigos podem omitir os campos novos sem apagar valores existentes; campos explicitamente vazios são removidos.
+- 17 testes Node aprovados; três migrações verificadas em PostgreSQL local via PGlite, incluindo validação, idempotência e conflitos.
+- Conferência no Chromium em celular e desktop: tipo obrigatório, medidas com vírgula, ficha antes do preço, peça única, troca de categoria e “Acompanha isqueiro: Não”.
+- Teste real no Supabase com produto técnico próprio: foto privada, gravação dos campos, publicação por categoria, troca de tipo, estoque, persistência e saída. Produto técnico removido ao terminar, sem remover produtos da Duda.
+- Build e whitespace dos arquivos-fonte aprovados. Medidas/modelo/compatibilidade das peças existentes continuam em branco até serem preenchidos pela Duda.

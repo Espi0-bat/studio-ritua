@@ -19,3 +19,8 @@ Dados locais na chave `ritua-admin-demo-v1`, independentes da sessão real e do 
 ## Testes
 
 `npm test` e `npm run build -- --base=/studio-ritua/`. A documentação do banco, autorização temporária de testes e remoção de acesso está em `supabase/README.md`.
+
+
+## Ficha técnica por tipo
+
+Novos cadastros exigem escolher o tipo. Piteiras podem informar comprimento em cm, diâmetro com unidade cm/mm e modelo; cases podem informar compatibilidade e se acompanham isqueiro (Não informado/Sim/Não). A marcação “Peça única” vale para todos os tipos e não altera estoque. Campos vazios não aparecem no site. Ao trocar de tipo e salvar, os campos da categoria anterior são limpos; a duplicação preserva os campos aplicáveis. A ficha fica entre a descrição e o preço nos detalhes.

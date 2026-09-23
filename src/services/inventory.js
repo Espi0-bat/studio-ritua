@@ -1,3 +1,4 @@
+import { normalizeDetails } from './productDetails.js'
 export const categories = ['Cuia', 'Case', 'Piteira']
 export const actionLabels = { reserve: 'Reserva', release: 'Reserva cancelada', sell: 'Venda', sellReserved: 'Venda de reserva', restock: 'Reposição', remove: 'Retirada', undo: 'Correção' }
 export function validateProduct(input) {
@@ -7,7 +8,7 @@ export function validateProduct(input) {
   if (!Number.isSafeInteger(input.priceCents) || input.priceCents < 0) throw new Error('Informe um preço válido.')
   if (String(input.description || '').length > 2000) throw new Error('Use até 2.000 caracteres na descrição.')
   if (!Array.isArray(input.photos) || input.photos.length > 4 || input.photos.some(p => typeof p !== 'string' || !/^data:image\/(jpeg|png|webp);base64,/.test(p))) throw new Error('Selecione até quatro fotos JPG, PNG ou WebP.')
-  return { name, category: input.category, priceCents: input.priceCents, description: String(input.description || '').trim(), photos: input.photos, published: Boolean(input.published) }
+  return { ...normalizeDetails(input), name, category: input.category, priceCents: input.priceCents, description: String(input.description || '').trim(), photos: input.photos, published: Boolean(input.published) }
 }
 export function stockChange(product, action, quantity) {
   if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 9999) throw new Error('Informe uma quantidade inteira entre 1 e 9.999.')
