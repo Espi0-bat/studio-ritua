@@ -14,6 +14,7 @@ export default function AdminEntry() {
   const [notice, setNotice] = useState('')
   const [retry, setRetry] = useState(0)
   const [recovering, setRecovering] = useState(arrivedFromRecovery)
+  const [recovered, setRecovered] = useState(false)
   const [fresh, setFresh] = useState('')
   const [repeat, setRepeat] = useState('')
   useEffect(() => {
@@ -58,19 +59,21 @@ export default function AdminEntry() {
     e.preventDefault(); if (busy) return
     if (fresh !== repeat) { setError('As duas senhas precisam ser iguais.'); return }
     setBusy(true); setError('')
-    try { await changePassword(fresh); setFresh(''); setRepeat(''); setRecovering(false); setNotice('Senha atualizada. Use a nova senha nos próximos acessos.') }
+    try { await changePassword(fresh); setFresh(''); setRepeat(''); setRecovered(true) }
     catch (e) { setError(e.message) } finally { setBusy(false) }
   }
   async function signOut() { const { error } = await supabase.auth.signOut(); if (error) throw new Error('Não foi possível sair. Confira a conexão e tente novamente.'); else { setSession(null); setAllowed(false); setPassword(''); setRecovering(false) } }
   if (!supabase) return <main className="admin"><h1>Painel indisponível</h1><p>A conexão do studio precisa ser configurada.</p><a href="#">Voltar ao site</a></main>
   if (recovering && session) return <main className="admin admin-login"><a className="admin-brand" href="#">studio rituá<span>Seu painel de peças</span></a>
-    <section className="admin-login-card"><h1>Defina sua nova senha.</h1><form onSubmit={saveRecovered}>
+    <section className="admin-login-card">{recovered ? <><h1>Senha atualizada.</h1>
+      <p role="status">Pronto. Use a nova senha nos próximos acessos, e guarde-a em lugar seguro.</p>
+      <button className="admin-primary" onClick={() => { setRecovered(false); setRecovering(false) }}>Abrir o painel</button></> : <><h1>Defina sua nova senha.</h1><form onSubmit={saveRecovered}>
       <p>Escolha uma senha de no mínimo 12 caracteres, que você não use em nenhum outro site.</p>
       <label>Nova senha<input autoFocus type="password" autoComplete="new-password" required minLength={12} disabled={busy} value={fresh} onChange={e => setFresh(e.target.value)} /></label>
       <label>Repita a nova senha<input type="password" autoComplete="new-password" required minLength={12} disabled={busy} value={repeat} onChange={e => setRepeat(e.target.value)} /></label>
       {error && <p className="admin-error" role="alert">{error}</p>}
       <button className="admin-primary" disabled={busy}>{busy ? 'Salvando…' : 'Salvar nova senha'}</button>
-    </form></section><a href="#">Voltar ao site ↗</a>
+    </form></>}</section><a href="#">Voltar ao site ↗</a>
   </main>
   if (session && allowed && !checking) return <Admin catalog={liveCatalog} userEmail={session.user.email} onSignOut={signOut} onChangePassword={changePassword} />
   return <main className="admin admin-login"><a className="admin-brand" href="#">studio rituá<span>Seu painel de peças</span></a>
