@@ -103,3 +103,14 @@ Os prints do site anterior orientam os textos destacados. Desconto de 10%, filtr
 - [ ] Verificar sistematicamente as interações no navegador em celular e desktop.
 
 Botão de personalização, aviso de pronta entrega e mudança do título para “Cuias Studio Rituá” continuam fora da implementação enquanto pendentes de esclarecimento, conforme o item 4.
+
+## 8. Textos da cliente — seção “Sobre as peças”
+
+- [x] Substituir os quatro primeiros itens do FAQ pelos textos enviados pela cliente: “Sobre as piteiras”, “Sobre as cuias”, “Quero uma cuia, como faço?” e “Como faço uma encomenda personalizada?”.
+- [x] Informar vidro borossilicato e detalhes das versões Premium, incluindo prata 925.
+- [x] Atualizar a descrição da cerâmica plástica e explicar os drops e o destaque “Disponíveis” no Instagram.
+- [x] Informar encomendas de cuia e case pela DM, pagamento de 50% no início e 50% na finalização, com prazo de até 6 dias.
+- [x] Manter o item de contato e os links existentes para o Instagram.
+- [x] Acrescentar “As peças voltam ao estoque?” com o texto enviado sobre drops limitados e a possibilidade de as peças não voltarem.
+
+O texto recebeu apenas correções de acentuação e pontuação e remoção da entidade HTML residual `&#x20;`. As informações de disponibilidade na galeria permanecem como estavam; o envio da cliente atualiza o conteúdo do FAQ.

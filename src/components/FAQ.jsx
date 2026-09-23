@@ -1,10 +1,11 @@
 import { instagramDirectUrl, instagramUrl } from '../config'
 import './FAQ.css'
 const questions = [
-  { question: 'As piteiras já estão disponíveis?', answer: 'As piteiras estão para chegar. A peça apresentada no site é um modelo de exemplo; os modelos e as medidas da seleção Rituá serão publicados quando estiverem confirmados.' },
-  { question: 'Os cases estão disponíveis?', answer: 'Os cases apresentados estão indisponíveis. As últimas peças foram vendidas e as próximas criações serão apresentadas por aqui e no Instagram.' },
-  { question: 'Como saber se um case serve no meu isqueiro?', answer: 'Cada novo case terá a indicação do modelo de isqueiro compatível, incluindo marca e tamanho. Quando houver efeito no escuro ou sob luz UV, essa informação também estará na descrição da peça.' },
-  { question: 'De que são feitas as cuias?', answer: 'As cuias Rituá são feitas à mão em cerâmica plástica. A galeria apresenta as cores, as formas e os detalhes do trabalho do studio.' },
+  { question: 'Sobre as piteiras', answer: 'São feitas em vidro borossilicato de alta qualidade. As versões Premium têm acabamentos mais elaborados e detalhes exclusivos, como detalhes em prata 925, além de designs e técnicas diferenciadas.' },
+  { question: 'Sobre as cuias', answer: 'As cuias são feitas em cerâmica plástica, um material levemente maleável e resistente, que permite criar formatos, cores e detalhes diferentes em cada peça.' },
+  { question: 'Quero uma cuia, como faço?', answer: 'As cuias saem em drops, e sempre que um está acabando, já tem outro vindo por aí. As disponíveis ficam no destaque “Disponíveis”. Para comprar ou pedir uma personalizada, é só chamar na DM e escolher as cores que mais combinam com seu kit.' },
+  { question: 'Como faço uma encomenda personalizada?', answer: 'Dá pra encomendar cuia e case de isqueiro do jeitinho que você quiser. É só chamar a gente na DM do Instagram, mandar sua inspiração ou contar sua ideia. A partir disso, passamos o orçamento. Com 50% do pagamento, a encomenda começa a ser produzida; os outros 50% são pagos na finalização. O prazo é de até 6 dias.' },
+  { question: 'As peças voltam ao estoque?', answer: 'Depende da peça. Algumas fazem parte de drops limitados e podem não voltar, então se gostou, não deixa pra depois.' },
 ]
 export default function FAQ() {
   return (
