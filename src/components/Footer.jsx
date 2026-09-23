@@ -38,14 +38,6 @@ export default function Footer() {
         )}
 
       </div>
-      <details className="container footer__privacy" id="privacidade">
-        <summary>Privacidade e armazenamento no navegador</summary>
-        <p>Este aviso descreve o uso de dados neste site da Studio Rituá. Para dúvidas ou solicitações sobre seus dados, escreva para <a href="mailto:studioritua@gmail.com">studioritua@gmail.com</a>.</p>
-        <p>O catálogo pode ser consultado sem cadastro. Não instalamos ferramentas de publicidade ou análise de comportamento. O site não recebe pagamentos nem possui formulário de pedidos: o botão de contato abre uma conversa no Instagram, sujeita também à política de privacidade daquela plataforma.</p>
-        <p>Usamos GitHub Pages para hospedar o site e Supabase para disponibilizar o catálogo e autenticar quem administra a loja. Ao acessar esses serviços, dados técnicos como endereço IP, navegador e registros de acesso podem ser processados para entregar o conteúdo e proteger o serviço.</p>
-        <p>No painel, o e-mail identifica os administradores autorizados e a sessão é armazenada no navegador para manter o acesso. O modo de demonstração salva os cadastros de teste apenas nesse navegador. Esse armazenamento tem finalidade funcional, não publicitária. Use “Sair” ao terminar o acesso ao painel; também é possível apagar os dados do site nas configurações do navegador, o que encerra a sessão local e apaga a demonstração.</p>
-        <p>Você pode entrar em contato para solicitar informações sobre tratamento de dados, acesso, correção ou exclusão, observadas as obrigações legais aplicáveis. Este aviso será revisto se forem adicionados novos usos de dados.</p>
-      </details>
       <div className="container footer__bottom">
         <p>© {year} Studio Rituá</p>
         <p>Engenharia do site por <a href="https://pixelry.com.br" target="_blank" rel="noopener noreferrer">PIXELRY</a></p>

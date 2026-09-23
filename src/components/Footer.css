@@ -87,8 +87,3 @@
   .footer__inner { grid-template-columns: 1fr; gap: 2rem; }
   .footer__bottom { flex-direction: column; gap: 0.4rem; text-align: center; }
 }
-
-.footer__privacy { color: var(--cream); padding-block: 1.5rem; font-size: 1rem; }
-.footer__privacy summary { cursor: pointer; text-decoration: underline; }
-.footer__privacy p { max-width: 75ch; margin-top: 1rem; line-height: 1.6; }
-.footer__privacy a { color: inherit; }
