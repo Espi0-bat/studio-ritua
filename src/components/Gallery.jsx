@@ -46,6 +46,7 @@ export default function Gallery({ products = staticProducts, preview = false }) 
       trigger.current?.focus({ preventScroll: true })
     }
   }, [selected])
+  useEffect(() => { if (selected && !products.some(p => p.id === selected)) setSelected(null) }, [products, selected])
   const product = products.find(item => item.id === selected)
   const contact = product?.reference ? instagramUrl : instagramDirectUrl
   return (

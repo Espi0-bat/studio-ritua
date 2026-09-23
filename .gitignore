@@ -31,3 +31,7 @@ src/assets/images/IMG_*.JPG
 src/assets/images/handprint-ritua-original.png
 src/assets/fonts/*.ttf
 Studio Rituá png logo.png
+
+# Estado local do Supabase CLI
+supabase/.temp/
+supabase/.branches/

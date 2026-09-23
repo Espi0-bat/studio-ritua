@@ -70,3 +70,11 @@
 .admin-catalog-preview .gallery__carousel-controls button { padding: 0; border-radius: 50%; font-size: 24px; }
 .admin-catalog-preview .gallery__close { background: var(--cream); }
 @media (max-width: 600px) { .admin-catalog-preview .gallery__open { border-radius: 16px; } }
+.admin-login { display: grid; align-content: start; gap: 28px; }
+.admin-login-card { width: min(100%, 520px); margin: 20px auto; padding: 28px; background: #fff8ee; border: 1px solid #7e060730; border-radius: 22px; }
+.admin-login-card h1 { font-size: 32px; margin-bottom: 24px; }
+.admin-login-card form { display: grid; gap: 18px; }
+.admin-login-card p { line-height: 1.6; }
+.admin-account { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 14px; }
+.admin-account span { overflow-wrap: anywhere; }
+.admin-live-banner { background: #9dab7f30; border-color: var(--green); }

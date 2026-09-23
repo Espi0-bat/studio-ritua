@@ -410,3 +410,4 @@
   .gallery__category + .gallery__category { margin-top: 56px; }
   .gallery__premium { font-size: 26px; }
 }
+.catalog-load-note { color: var(--cream); padding: 20px; text-align: center; }

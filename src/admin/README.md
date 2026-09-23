@@ -1,26 +1,21 @@
-# Painel de demonstração
+# Painel da Rituá
 
-Branch: `feat/painel-ritua`. Iniciar com `npm run dev` e abrir `http://localhost:5173/#/admin` (usar a porta exibida pelo Vite). A raiz continua exibindo o site original; a entrada administrativa é carregada separadamente.
+- Painel real: `/#/admin`, configurado por `.env.local`, com login pelo link de e-mail do Supabase.
+- Demonstração isolada: `/#/admin/demo`, sem login e sem alterar dados reais.
+- Local: `npm run dev` e a porta exibida pelo Vite.
 
 ## Recursos
 
-- Cadastro/edição de nome, categoria, preço, descrição e até quatro fotos.
-- Fotos JPG/PNG/WebP reduzidas para até 1.000px antes de guardar no navegador.
-- Rascunhos, duplicação, busca, filtros e vitrine de demonstração.
-- Reservas, venda direta, venda reservada, cancelamento, reposição e retirada.
-- Histórico, reversão da última movimentação de cada peça e exportação JSON.
-- Bloqueio de gravações concorrentes entre abas com Web Locks, revisão de produto e identificador de operação contra repetição.
+Cadastro, edição, duplicação, até quatro fotos por peça, rascunhos, publicação, filtros, estoque, reservas, vendas, reposição, retirada, histórico com reversão e exportação JSON. Selecionar o tipo coloca a peça em cases, piteiras ou cuias. JPG/PNG/WebP são reduzidos para até 1.000px antes do envio.
 
-## Limites deliberados
+O painel real atualiza os dados ao abrir, ao voltar à aba e a cada minuto. Conflitos de edição pedem que o cadastro seja reaberto. Operações usam UUID para evitar duplicação em novas tentativas. A exportação é uma cópia de consulta, sem importação automática; os links de foto nela são temporários.
 
-Sem conta/login real, sincronização, pagamento ou conexão com o site público. Dados fictícios são guardados em `localStorage` na chave `ritua-admin-demo-v1`; limpar dados do navegador apaga a demonstração. O espaço é limitado: se as fotos excederem a cota, a operação informa o erro e não confirma o salvamento. Exportação é cópia de consulta, não existe importação nesta versão. Abas privadas podem descartar o conteúdo ao fechar.
+Reservas são contagens por produto, não pedidos individuais. O filtro “Reservado” inclui peças com reserva parcial. As fotos editoriais anteriores do site continuam fora do controle de estoque: não eram produtos individuais confirmados.
 
-Não guardar informações pessoais de clientes nesta demonstração. Reservas são contagens por produto; não representam pedidos individuais. Valores dos exemplos são fictícios. O filtro “Reservado” também inclui peças com reserva parcial.
+## Demonstração
 
-## Conferência
+Dados locais na chave `ritua-admin-demo-v1`, independentes da sessão real e do Supabase. Limpar o armazenamento apaga a demonstração. Fotos demais podem esgotar o espaço; nesse caso o salvamento falha com aviso. Não há migração automática dos exemplos para o banco real.
 
-`npm test` verifica invariantes de estoque, idempotência, concorrência, reversão, validação e falha de armazenamento. `npm run build -- --base=/studio-ritua/` valida o build com o caminho do Pages.
+## Testes
 
-O plano de conexão e a migração estão em `supabase/README.md`. O SQL ainda precisa ser validado no Supabase real antes do uso em produção.
-
-Validação realizada: nove testes Node aprovados; build de produção aprovado; fluxo automatizado no Chromium em 390px com foto, reserva, venda, reversão, persistência, duplicação e rascunho oculto da prévia; capturas inspecionadas em 390px e 1440px, sem erros de página. Migração executada em PGlite com Auth/Storage simulados, incluindo testes de acesso e isolamento das fotos. Não houve teste em Safari nem em um projeto Supabase real.
+`npm test` e `npm run build -- --base=/studio-ritua/`. A documentação do banco, autorização temporária de testes e remoção de acesso está em `supabase/README.md`.

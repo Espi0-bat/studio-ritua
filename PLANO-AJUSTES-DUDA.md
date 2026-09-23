@@ -133,8 +133,8 @@ O texto recebeu apenas correções de acentuação e pontuação e remoção da 
 - [x] Validar nove testes automatizados de estoque e build com o caminho do Pages.
 - [x] Validar migração, permissões e operações em PostgreSQL local via PGlite, simulando os esquemas Auth e Storage. Não substitui os testes em Supabase.
 - [x] Conferir no Chromium os fluxos de cadastro com foto, reserva, venda, reversão, duplicação, persistência e navegação pública, além dos layouts em 390px e 1440px.
-- [ ] Conectar Auth, Storage e banco quando houver o projeto Supabase.
-- [ ] Validar permissões e concorrência no Supabase real antes de publicar o painel de produção.
+- [x] Conectar Auth, Storage e banco ao projeto Supabase (ver item 13).
+- [x] Validar permissões e concorrência no Supabase real antes de publicar o painel de produção (ver item 13).
 
 Esta etapa não altera os produtos do site público. A publicação do painel de demonstração no GitHub Pages foi autorizada posteriormente pelo usuário. Reservas nesta versão controlam quantidades; não há cadastro de pedidos ou clientes.
 
@@ -155,3 +155,20 @@ Correções incluídas na publicação autorizada do painel de demonstração. O
 - [x] Validar 12 testes Node e, no navegador, classificação, troca de tipo, rascunhos, carrosséis nos dois sentidos em celular e desktop, modais e ausência de overflow.
 
 O painel ainda usa dados locais de demonstração. A integração do catálogo real depende do projeto Supabase; entrar na organização não conecta automaticamente o site.
+
+
+## 13. Painel conectado ao Supabase
+
+- [x] Aplicar tabelas, RLS, bucket privado e funções transacionais no projeto Studio Ritua.
+- [x] Autorizar o e-mail da proprietária e o e-mail temporário de teste fornecido pelo usuário, sem expor a lista no frontend.
+- [x] Implementar acesso pelo link padrão enviado pelo Supabase, retorno ao painel e saída. A personalização de template por código foi rejeitada pelo plano gratuito; o acesso usa link, sem senha.
+- [x] Conectar cadastro, revisão de edição, fotos, reservas, vendas, reposição e histórico ao banco.
+- [x] Conectar as peças publicadas às categorias do site, preservando a galeria editorial existente sem inventar estoque para suas fotos.
+- [x] Manter a demonstração isolada em `/#/admin/demo`.
+- [x] Conferir login real sem enviar e-mail, foto privada de rascunho, publicação, acesso público, bloqueio de escrita direta, reserva, venda, reversão, persistência e logout.
+- [x] Conferir duas vendas concorrentes e repetição de requisição no Supabase real. Remover os produtos técnicos após os testes.
+- [x] Executar 12 testes Node, build e verificação de whitespace.
+- [ ] Conferir com os usuários a entrega do link na caixa de entrada e o primeiro acesso pelos próprios e-mails.
+- [ ] Retirar a autorização temporária do usuário depois da aprovação dos testes, conforme solicitado.
+
+O teste de login usou geração de link pela API administrativa sem envio de mensagem. Nenhuma chave secreta foi incluída no código ou no Git. A galeria pública consulta novidades ao abrir, ao voltar à aba e a cada minuto. As fotos editoriais antigas continuam separadas dos produtos gerenciados no painel.
