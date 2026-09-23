@@ -1,20 +1,16 @@
 import './Ticker.css'
 
 const items = [
-  'Piteiras',
-  '✦',
-  'Cases de isqueiro',
-  '✦',
-  'Cuias',
-  '✦',
-  'Seu ritual',
-  '✦',
-  'Cor e personalidade',
-  '✦',
-  'Nos detalhes',
-  '✦',
-  'Studio Rituá',
-  '✦',
+  'Feito à mão',
+  '•',
+  'Drops exclusivos',
+  '•',
+  'Peças únicas',
+  '•',
+  'Cases & cuias',
+  '•',
+  'Piteiras artísticas',
+  '•',
 ]
 
 export default function Ticker() {

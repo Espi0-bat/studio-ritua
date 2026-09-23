@@ -114,3 +114,9 @@ Botão de personalização, aviso de pronta entrega e mudança do título para �
 - [x] Acrescentar “As peças voltam ao estoque?” com o texto enviado sobre drops limitados e a possibilidade de as peças não voltarem.
 
 O texto recebeu apenas correções de acentuação e pontuação e remoção da entidade HTML residual `&#x20;`. As informações de disponibilidade na galeria permanecem como estavam; o envio da cliente atualiza o conteúdo do FAQ.
+
+## 9. Faixa e espaçamento da galeria — novo print da Duda
+
+- [x] Atualizar a faixa para “Feito à mão • Drops exclusivos • Peças únicas • Cases & cuias • Piteiras artísticas”.
+- [x] Remover o texto “As peças” acima de “Piteiras de vidro”.
+- [x] Reduzir o espaço no topo da galeria para 56px no desktop e 32px no celular.

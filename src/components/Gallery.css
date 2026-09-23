@@ -5,6 +5,10 @@
   border-radius: 60px;
 }
 
+.gallery.section {
+  padding-top: 56px;
+}
+
 .gallery h2 {
   color: var(--cherry);
 }
@@ -181,6 +185,10 @@
 }
 
 @media (max-width: 600px) {
+  .gallery.section {
+    padding-top: 32px;
+  }
+
   .gallery {
     margin-inline: 10px;
     border-radius: 32px;

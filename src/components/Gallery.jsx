@@ -115,7 +115,6 @@ export default function Gallery() {
   return (
     <section id="galeria" className="gallery section">
       <div className="container">
-        <p className="eyebrow">As peças</p>
         <div className="gallery__featured">
           {featured.map(item => (
             <article className="gallery__feature" key={item.id}>
