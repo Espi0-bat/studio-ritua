@@ -1,8 +1,8 @@
 project_id = "studio-ritua"
 
 [auth]
-site_url = "https://espi0-bat.github.io/studio-ritua/"
-additional_redirect_urls = ["https://espi0-bat.github.io/studio-ritua/", "http://localhost:5173/", "http://127.0.0.1:5173/", "https://espi0-bat.github.io/studio-ritua/?admin=1", "http://localhost:5173/?admin=1", "http://127.0.0.1:5173/?admin=1"]
+site_url = "https://studioritua.com.br"
+additional_redirect_urls = ["https://studioritua.com.br", "https://studioritua.com.br/?admin=1", "https://espi0-bat.github.io/studio-ritua/", "https://espi0-bat.github.io/studio-ritua/?admin=1", "http://localhost:5173/", "http://localhost:5173/?admin=1", "http://127.0.0.1:5173/", "http://127.0.0.1:5173/?admin=1"]
 enable_signup = false
 
 [auth.email]
