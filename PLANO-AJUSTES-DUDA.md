@@ -264,3 +264,63 @@ As unidades e o formato de “Modelo” acima são propostas de interface. O ped
 - Conferência no Chromium em celular e desktop: tipo obrigatório, medidas com vírgula, ficha antes do preço, peça única, troca de categoria e “Acompanha isqueiro: Não”.
 - Teste real no Supabase com produto técnico próprio: foto privada, gravação dos campos, publicação por categoria, troca de tipo, estoque, persistência e saída. Produto técnico removido ao terminar, sem remover produtos da Duda.
 - Build e whitespace dos arquivos-fonte aprovados. Medidas/modelo/compatibilidade das peças existentes continuam em branco até serem preenchidos pela Duda.
+
+## 15. Vitrine demonstrativa por categoria e destaque de peça única
+
+**Status: implementação autorizada e concluída localmente; pendências jurídicas detalhadas abaixo.**
+
+### 15.1. Demonstrativos como alternativa ao catálogo disponível
+
+- [x] Manter apenas um demonstrativo por categoria: Case, Piteira e Cuia; reduzir as cinco imagens editoriais de cuias à foto “Um canto do ritual”.
+- [x] Ocultar o demonstrativo quando existir produto real publicado com estoque na mesma categoria. Exemplo: o Case Cogumelo deve ocultar “Outras formas”.
+- [x] Quando a última unidade do último produto publicado da categoria for vendida, reapresentar seu demonstrativo. Novo estoque volta a ocultá-lo.
+- [x] Rascunhos não ocultam demonstrativos. Produtos reservados continuam visíveis como “Reservado”; reserva não equivale a venda.
+- [x] Proposta: retirar produtos vendidos da vitrine pública, preservando cadastro e histórico no painel.
+- [x] Identificar o demonstrativo como “Vitrine · Sem disponibilidade”, sem preço ou indicação de venda imediata.
+- [x] Remover avisos de exemplo ou “Piteiras em breve” quando houver produtos reais na seção.
+- [x] Preservar o desenho e a ordem das seções. Manter a rolagem lateral infinita com vários itens; com apenas um, dispensar controles e convite para deslizar.
+- [x] Não interpretar carregamento ou falha de conexão como estoque esgotado.
+
+### 15.2. Destaque visual de “Peça única”
+
+**Pedido do usuário:** diferenciar “Peça única” do restante da identificação, usando vermelho ou outro tratamento que chame atenção.
+
+- [x] Proposta visual: apresentar “Peça única” como um pequeno selo com fundo vermelho da marca e texto creme, acima do nome do produto, junto da identificação de categoria e Studio Rituá.
+- [x] Manter categoria e nome do studio com o tratamento discreto atual, destacando somente o selo.
+- [x] Exibir o selo apenas quando a opção “Peça única” estiver marcada no painel, para qualquer categoria. Não inferir exclusividade pela quantidade em estoque.
+- [x] Preservar o texto explícito, garantir contraste e acomodar a identificação no celular sem sobreposição ou corte.
+- [x] A mudança é visual: não altera preço, estoque, reserva ou regras de venda.
+
+### 15.3. Conferência prevista após autorização
+
+Validar as transições por categoria (publicar, vender última unidade, repor, reservar e despublicar), preservação do histórico, ausência de demonstrativos duplicados e apresentação do selo em celular e desktop. Foto de cuia definida na seção 15.5; execução e validação registradas na seção 15.6.
+
+
+### 15.4. Privacidade, cookies e informações da loja
+
+Implementação autorizada pelo usuário junto com a seção 15. A revisão abaixo é técnica e preliminar, não certifica conformidade jurídica integral.
+
+- Auditoria do código: sem analytics, pixel, embeds sociais ou fontes remotas. Supabase mantém sessão administrativa no navegador; demonstração usa armazenamento local. GitHub Pages e Supabase recebem requisições e podem tratar dados técnicos de conexão.
+- Não adicionar banner genérico de consentimento ao cenário atual. Se houver rastreadores opcionais no futuro, revisar bases legais, bloqueio prévio quando aplicável, recusa e revogação, antes de ativá-los.
+- Adicionar aviso acessível no rodapé com finalidades, serviços usados, armazenamento funcional e contato para direitos: studioritua@gmail.com.
+- **Pendente com Duda:** identificação legal do fornecedor, documento aplicável e endereço de atendimento/publicação; confirmar condições de pagamento, frete, entrega, troca, defeito, cancelamento e arrependimento. Vendas por direct não dispensam automaticamente informações de oferta e direitos do consumidor. Não inventar esses dados nem exceções para peças personalizadas.
+- **Pendente de revisão:** completar identificação do controlador, bases legais, retenção efetiva, compartilhamentos e transferências internacionais conforme a operação e os contratos dos provedores. O aviso técnico inicial não substitui essa revisão.
+- **Foto de terceiro:** confirmar licença/autorização da foto de piteira da Madruga Shop ou substituí-la por foto própria autorizada; crédito não comprova licença.
+- Fontes consultadas: [Guia ANPD de cookies](https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia_orientativo_cookies_e_protecao_de_dados_pessoais), [LGPD](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm), [Decreto 7.962/2013, arts. 2 e 5](https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2013/decreto/d7962.htm).
+
+### 15.5. Decisões de implementação
+
+- Usar a foto existente “Um canto do ritual”, com uma cuia rosa, como único demonstrativo de cuias. Arquivos e demais fotos originais são preservados.
+- Filtrar somente a apresentação pública: estoque positivo (incluindo reservado) e publicação ativa ocultam o demonstrativo da categoria; estoque zero não aparece na vitrine. Histórico e painel permanecem intactos.
+- Aguardar a primeira leitura bem-sucedida antes de escolher demonstrativos. Em erro posterior, preservar o último catálogo carregado.
+- Selo vermelho com texto creme apenas em peças marcadas como únicas; manter a identificação acessível e responsiva.
+
+
+### 15.6. Resultado local
+
+- Vitrine condicional por categoria implementada, com um único demonstrativo de cuia e sem alteração no banco ou nos estoques reais.
+- Selo de peça única e aviso técnico de privacidade implementados. Sem banner de consentimento para rastreadores inexistentes.
+- 20 testes automatizados aprovados, incluindo publicação por categoria, reserva, última venda, reposição e múltiplos produtos.
+- Build de produção aprovado. Teste de navegador com respostas simuladas em 390 e 1440 px aprovado: selo, ocultação/retorno de demonstrativo, retenção do catálogo após erro, abertura do aviso e ausência de transbordamento horizontal.
+- Pendências de informações legais e direitos de imagem continuam abertas na seção 15.4. Não foram inventados dados do fornecedor nem regras comerciais.
+- Alterações desta etapa ainda não publicadas no GitHub Pages.

@@ -74,7 +74,7 @@ export default function Gallery({ products = staticProducts, preview = false }) 
                 {Number.isInteger(item.priceCents) && <p className="gallery__card-price">{formatPrice(item.priceCents)}</p>}
               </>
             )} /> : <p className="gallery__empty">{preview ? 'Nenhuma peça publicada nesta categoria. Selecione este tipo no cadastro para adicioná-la aqui.' : 'Novas peças serão apresentadas por aqui.'}</p>}
-            {section.items.some(item => item.reference) && <p className="gallery__feature-caption">Piteiras em breve. A peça da foto é um modelo de exemplo.</p>}
+            {section.items.some(item => item.reference) && <p className="gallery__feature-caption">Vitrine demonstrativa. A peça da foto não está disponível para compra.</p>}
           </section>
         ))}
       </div>
@@ -87,10 +87,10 @@ export default function Gallery({ products = staticProducts, preview = false }) 
           </div>
           <ProductMedia product={product} detail reducedMotion={reducedMotion} />
           <div className="gallery__detail-text">
-            <p className="eyebrow">{product.tag}</p>
+            <p className="eyebrow gallery__identity">{product.isUnique ? <>{product.category} · <span className="gallery__unique">Peça única</span> · Studio Rituá</> : product.tag}</p>
             <h2 id="photo-title">{product.title}</h2>
             <p id="photo-description" className="gallery__subtitle">{product.subtitle}</p>
-            {product.available === false && <p className="gallery__availability">Indisponível</p>}
+            {product.available === false && <p className="gallery__availability">{product.status || 'Indisponível'}</p>}
             {product.specs && <dl className="gallery__specs" aria-label="Especificações das peças">
               {Object.entries(product.specs).map(([label, value]) => (
                 <div className="gallery__spec-row" key={label}>

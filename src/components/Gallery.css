@@ -411,3 +411,6 @@
   .gallery__premium { font-size: 26px; }
 }
 .catalog-load-note { color: var(--cream); padding: 20px; text-align: center; }
+
+.gallery__identity { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; }
+.gallery__unique { display: inline-block; background: #850800; color: #faead3; border-radius: 999px; padding: .3rem .7rem; font-weight: 700; }

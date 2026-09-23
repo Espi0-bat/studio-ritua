@@ -53,7 +53,7 @@ const featured = [
     id: 'piteira-exemplo',
     media: { type: 'image', src: piteiraExample, width: 1000, height: 1000 },
     gridLabel: 'Piteiras', title: 'Mona Brisa · Cápsula Coração', tag: 'Piteiras · Modelo de exemplo',
-    subtitle: 'Uma referência para conhecer os detalhes de uma piteira. As piteiras da Rituá estão para chegar; os modelos da seleção serão apresentados em breve.',
+    subtitle: 'Uma referência para conhecer os detalhes de uma piteira. Esta foto é demonstrativa e não representa uma peça disponível para compra.',
     alt: 'Piteira de vidro Mona Brisa Cápsula Coração, modelo de exemplo da Madruga Shop',
     status: 'Em breve · exemplo',
     specs: { Comprimento: '113 mm (11,3 cm)', 'Diâmetro informado': '4,8 mm' },
@@ -67,5 +67,4 @@ const featured = [
     alt: 'Cases de isqueiro coloridos decorados com cogumelos, rostos e personagens sobre uma mesa clara',
   },
 ]
-export const staticProducts = [...featured.map(item => ({ ...item, category: item.reference ? 'Piteira' : 'Case', published: true })), ...cuias.map(item => ({ ...item, category: 'Cuia', published: true }))]
-
+export const staticProducts = [...featured.map(item => ({ ...item, category: item.reference ? 'Piteira' : 'Case' })), ...cuias.filter(item => item.id === 'um-canto-do-ritual').map(item => ({ ...item, category: 'Cuia' }))].map(item => ({ ...item, published: true, showcase: true, available: false, status: 'Vitrine · Sem disponibilidade' }))
