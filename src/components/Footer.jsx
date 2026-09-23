@@ -4,6 +4,10 @@ import './Footer.css'
 
 // Texto de trocas e devoluções escrito pela Duda, publicado a pedido do usuário com apenas
 // correções de português. Conflitos com os prazos do CDC registrados na seção 19.5 do PLANO-AJUSTES-DUDA.md.
+const reservationPolicy = [
+  'Para garantir a peça, é necessário o pagamento de 50% do valor. O restante deve ser pago antes do envio ou da retirada do pedido.',
+  'Após a confirmação do pagamento, não é possível desistir da compra ou solicitar o reembolso do valor pago.',
+]
 const returnsPolicy = [
   {
     title: 'Cases de isqueiro',
@@ -29,6 +33,12 @@ const returnsPolicy = [
       'Todas as piteiras são cuidadosamente verificadas antes do envio.',
       'Por serem peças delicadas e muitas vezes exclusivas, não realizamos trocas após o recebimento ou uso. Confira o modelo escolhido antes de finalizar o pedido.',
       'Caso a piteira chegue quebrada ou com algum problema aparente, entre em contato conosco pela DM e envie fotos e vídeos para avaliação.',
+    ],
+  },
+  {
+    title: 'Frete',
+    paragraphs: [
+      'O frete é pago pelo cliente no recebimento da peça. Caso a peça precise voltar, o frete de retorno também é por conta do cliente.',
     ],
   },
 ]
@@ -70,6 +80,10 @@ export default function Footer() {
 
       </div>
       <div className="container footer__legal">
+        <details id="reserva">
+          <summary>Reserva de peças</summary>
+          {reservationPolicy.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+        </details>
         <details id="devolucoes">
           <summary>Trocas e devoluções</summary>
           {returnsPolicy.map(({ title, paragraphs, options }) => (

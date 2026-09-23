@@ -501,3 +501,22 @@ Revisão por advogado continua recomendada e não foi feita. Esta análise é t�
 - **Correção do procedimento de deploy.** A seção 16.7 registra `npm run build -- --base=/studio-ritua/`, que está desatualizado desde a migração para domínio próprio (`CNAME` = `studioritua.com.br`, commit `f0651bb` da `gh-pages`). O site é servido na raiz do domínio, então o build correto é **`npm run build`** sem `--base`; usar a base antiga quebraria o carregamento de todos os assets.
 - `CNAME` e `.nojekyll` não são gerados pelo build e não estão em `public/`. Precisam ser preservados a cada deploy: apagar só `assets/`, `index.html` e os favicons antes de copiar o `dist`. O diff da publicação confirmou alteração apenas nos bundles e no `index.html`.
 - Pendente de conferência visual no site no ar, em celular e desktop.
+
+### 19.7. Respostas da Duda — pagamento, envio e reserva
+
+Recebidas em 23/09/2026 e publicadas. Continua valendo a decisão da seção 19.5: texto da Duda no ar como ela escreveu, com correções apenas de português.
+
+**Envio (FAQ).** Motoboy sai de **Boa Vista (RR)**, cobrado por quilômetro, sem valor mínimo e sem limite de distância. Transportadora cotada por destino e tamanho, com código de rastreio enviado por ela pela DM. Despacho em cerca de 30 minutos após a confirmação do pagamento. Frete pago pelo cliente.
+
+**Pagamento (FAQ).** Pix, dinheiro e cartão — dinheiro e cartão apenas na retirada presencial; envios são pagos por Pix.
+
+**Reserva (rodapé, âncora `#reserva`).** Texto próprio enviado pela Duda: 50% para garantir a peça, restante antes do envio ou da retirada, sem desistência nem reembolso após a confirmação do pagamento. Publicado na íntegra, sem correções — o texto chegou sem erros.
+
+**Frete na devolução (rodapé).** Frete pago pelo cliente no recebimento; se a peça voltar, o retorno também é por conta do cliente.
+
+**Conflitos adicionais com o CDC, comunicados ao usuário:**
+
+1. **"Não é possível desistir da compra ou solicitar o reembolso" (reserva).** É o ponto mais exposto do conjunto. Colide com o art. 49 (arrependimento em 7 dias na compra a distância, com devolução dos valores pagos), com o art. 51, II (é nula a cláusula que subtrai a opção de reembolso) e, em pagamento parcelado, com o art. 53 (perda total das parcelas pagas é nula).
+2. **Frete de retorno sempre por conta do cliente.** Quando a peça volta por vício, as despesas correm por conta do fornecedor (art. 18); no arrependimento do art. 49, parágrafo único, os valores pagos — inclusive frete — voltam ao consumidor. A regra vale para devolução por desistência sem defeito, não para esses dois casos.
+
+**Pendências abertas.** Identificação legal do fornecedor (nome ou razão social e CPF/CNPJ) continua faltando; a cidade agora é conhecida (Boa Vista/RR). A Duda não respondeu como fica a devolução de **peça personalizada**. Duas respostas ficaram ambíguas e foram publicadas de forma conservadora, aguardando confirmação: "por mtx" (entrega em mãos) foi lida como motoboy e não virou frase própria; "cartão apenas retirando aqui" foi lida como dinheiro e cartão restritos à retirada presencial.
