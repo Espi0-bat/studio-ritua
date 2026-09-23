@@ -101,7 +101,27 @@ function Movement({ product, action, event, onClose, onSave }) {
     {error && <p role="alert" className="admin-error">{error}</p>}<button disabled={busy} className="admin-primary">{busy ? 'Salvando…' : 'Confirmar'}</button>
   </form></Modal>
 }
-export default function Admin({ catalog, userEmail, onSignOut }) {
+function PasswordChange({ onClose, onSave }) {
+  const [password, setPassword] = useState('')
+  const [repeat, setRepeat] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const guard = useRef(false)
+  async function submit(e) {
+    e.preventDefault(); if (guard.current) return
+    if (password !== repeat) { setError('As duas senhas precisam ser iguais.'); return }
+    guard.current = true; setBusy(true); setError('')
+    try { await onSave(password); onClose() }
+    catch (e) { setError(e.message) } finally { guard.current = false; setBusy(false) }
+  }
+  return <Modal title="Trocar senha" onClose={onClose} busy={busy}><form onSubmit={submit}>
+    <p className="admin-help">Escolha uma senha de no mínimo 12 caracteres, que você não use em nenhum outro site. Você continuará conectada depois da troca.</p>
+    <label>Nova senha<input autoFocus required disabled={busy} type="password" autoComplete="new-password" minLength={12} value={password} onChange={e => setPassword(e.target.value)} /></label>
+    <label>Repita a nova senha<input required disabled={busy} type="password" autoComplete="new-password" minLength={12} value={repeat} onChange={e => setRepeat(e.target.value)} /></label>
+    {error && <p role="alert" className="admin-error">{error}</p>}<button disabled={busy} className="admin-primary">{busy ? 'Salvando…' : 'Salvar nova senha'}</button>
+  </form></Modal>
+}
+export default function Admin({ catalog, userEmail, onSignOut, onChangePassword }) {
   const [state, setState] = useState(null)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -110,6 +130,7 @@ export default function Admin({ catalog, userEmail, onSignOut }) {
   const [search, setSearch] = useState('')
   const [editor, setEditor] = useState(null)
   const [movement, setMovement] = useState(null)
+  const [changingPassword, setChangingPassword] = useState(false)
   async function reload() { try { setState(await catalog.load()); setError('') } catch (e) { setError(e.message) } }
   useEffect(() => { reload(); const handler = () => reload(); window.addEventListener('focus', handler); const timer = setInterval(handler, 60000); return () => { window.removeEventListener('focus', handler); clearInterval(timer) } }, [])
   async function save(input, revision, operationId) { try { setState(await catalog.save(input, revision, operationId)); setNotice('Peça salva. As alterações publicadas já podem aparecer no site.') } catch (e) { await reload(); throw e } }
@@ -124,7 +145,7 @@ export default function Admin({ catalog, userEmail, onSignOut }) {
   const products = state?.products || []
   const visible = products.filter(p => p.name.toLocaleLowerCase('pt-BR').includes(search.toLocaleLowerCase('pt-BR')) && (view !== 'showcase' || p.published) && (filter === 'Todas' || (filter === 'Reservado' ? p.reserved > 0 : statusOf(p) === filter)))
   return <main className="admin">
-    <header className="admin-header"><a className="admin-brand" href="#/admin">studio rituá<span>Seu painel de peças</span></a><div className="admin-account"><span>{userEmail}</span><button onClick={async () => { try { await onSignOut() } catch (e) { setError(e.message) } }}>Sair</button><a href="#">Ver site ↗</a></div></header>
+    <header className="admin-header"><a className="admin-brand" href="#/admin">studio rituá<span>Seu painel de peças</span></a><div className="admin-account"><span>{userEmail}</span><button onClick={() => setChangingPassword(true)}>Trocar senha</button><button onClick={async () => { try { await onSignOut() } catch (e) { setError(e.message) } }}>Sair</button><a href="#">Ver site ↗</a></div></header>
     <aside className="admin-banner admin-live-banner"><strong>Painel conectado</strong><p>Suas peças e o estoque ficam salvos na conta do studio. Publique uma peça para exibi-la na categoria correspondente do site.</p></aside>
     <div className="admin-title"><div><p className="admin-kicker">Tudo no seu ritmo</p><h1>Suas peças, seu controle.</h1></div><button className="admin-primary" onClick={() => setEditor(blank())} disabled={!state}>+ Nova peça</button></div>
     {error && <p className="admin-error" role="alert">{error} <button onClick={reload}>Tentar novamente</button></p>}
@@ -151,5 +172,6 @@ export default function Admin({ catalog, userEmail, onSignOut }) {
     </>}
     {editor && <Editor initial={editor} onClose={() => setEditor(null)} onSave={save} />}
     {movement && <Movement {...movement} onClose={() => setMovement(null)} onSave={move} />}
+    {changingPassword && <PasswordChange onClose={() => setChangingPassword(false)} onSave={async password => { await onChangePassword(password); setNotice('Senha atualizada. Use a nova senha no próximo acesso.') }} />}
   </main>
 }

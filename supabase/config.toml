@@ -2,8 +2,10 @@ project_id = "studio-ritua"
 
 [auth]
 site_url = "https://studioritua.com.br"
-additional_redirect_urls = ["https://studioritua.com.br", "https://studioritua.com.br/?admin=1", "https://espi0-bat.github.io/studio-ritua/", "https://espi0-bat.github.io/studio-ritua/?admin=1", "http://localhost:5173/", "http://localhost:5173/?admin=1", "http://127.0.0.1:5173/", "http://127.0.0.1:5173/?admin=1"]
+additional_redirect_urls = ["https://studioritua.com.br", "https://studioritua.com.br/?admin=1", "http://localhost:5173/", "http://localhost:5173/?admin=1", "http://127.0.0.1:5173/", "http://127.0.0.1:5173/?admin=1"]
 enable_signup = false
+minimum_password_length = 12
+password_requirements = "lower_upper_letters_digits"
 
 [auth.email]
 # "enabled" é ignorado pelo CLI. Quem liga o provedor de e-mail no push é o
@@ -16,6 +18,15 @@ otp_length = 8
 otp_expiry = 600
 max_frequency = "1m"
 
+# Todas as chaves ficam explícitas: o push envia o valor zero das que faltam.
+# email_sent e anonymous_users contam por hora; as demais, por 5 minutos, por IP.
+[auth.rate_limit]
+email_sent = 4
+sms_sent = 30
+anonymous_users = 10
+token_refresh = 150
+sign_in_sign_ups = 10
+token_verifications = 10
 
 [auth.mfa.totp]
 enroll_enabled = true

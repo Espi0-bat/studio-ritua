@@ -4,11 +4,25 @@ Projeto: `zyytoorozczdlqgcqwpe` (Studio Ritua). O frontend usa URL e chave publi
 
 ## Acesso
 
-`/#/admin` usa Supabase Auth com e-mail e senha (`signInWithPassword`). O link mágico foi abandonado porque o serviço de e-mail padrão do Supabase não entrega para quem não é membro da organização, e nenhum SMTP próprio está configurado; o painel ficava inacessível por falta de e-mail, não por falta de permissão. As senhas são definidas pelo administrador no dashboard, em Authentication > Users; não há recuperação por e-mail enquanto não houver SMTP. A rota ainda aceita o retorno `?admin=1` e limpa o endereço para `/#/admin`. A autorização vem de `ritua_admin_emails`, associada ao e-mail confirmado em `auth.users`, ou de um UUID em `ritua_admins`. Metadados editáveis pelo usuário não concedem acesso.
+`/#/admin` usa Supabase Auth com e-mail e senha (`signInWithPassword`). O link mágico foi abandonado porque o serviço de e-mail padrão do Supabase não entrega para quem não é membro da organização, e nenhum SMTP próprio está configurado; o painel ficava inacessível por falta de e-mail, não por falta de permissão. A própria administradora troca a senha pelo painel, em "Trocar senha", e o endereço de login tem "Esqueci minha senha", que envia o link de redefinição e volta para `?admin=1`. O marcador `type=recovery` é lido em `services/supabase.js` antes de `createClient`, porque o cliente limpa o endereço e o evento `PASSWORD_RECOVERY` pode disparar antes de o painel montar. A redefinição por e-mail depende da entrega do serviço padrão do Supabase, limitada a 4 mensagens por hora e sem garantia para destinatários fora da organização; a troca pelo painel, com sessão ativa, não depende de e-mail nenhum. A rota ainda aceita o retorno `?admin=1` e limpa o endereço para `/#/admin`. A autorização vem de `ritua_admin_emails`, associada ao e-mail confirmado em `auth.users`, ou de um UUID em `ritua_admins`. Metadados editáveis pelo usuário não concedem acesso.
 
-A proprietária e o usuário temporário de teste foram autorizados conforme a conversa, em registros no banco (não em uma lista no frontend). Para retirar o acesso temporário depois da aprovação, excluir a linha correspondente em `ritua_admin_emails`. A checagem no banco impede novas consultas privadas e alterações mesmo que o usuário ainda tenha uma sessão válida. Dados já carregados no navegador não podem ser apagados remotamente.
+A proprietária e o usuário temporário de teste foram autorizados em registros no banco (não em uma lista no frontend). O acesso temporário `moutinhoezer@gmail.com` foi removido de `ritua_admin_emails` em 23/09/2026, após a aprovação; o usuário continua em `auth.users`, mas sem autorização `ritua_is_admin` não lê nem grava nada. `ritua_admins` (por UUID) está vazia: hoje a autorização é toda por e-mail. A checagem no banco impede novas consultas privadas e alterações mesmo que o usuário ainda tenha uma sessão válida. Dados já carregados no navegador não podem ser apagados remotamente.
 
 A rota de demonstração `/#/admin/demo` foi removida. Sem configuração, o painel mostra indisponibilidade em vez de dados fictícios.
+
+## Segurança do acesso
+
+Revisão de 23/09/2026, com os resultados medidos contra o projeto em produção.
+
+Política de senha no servidor: `minimum_password_length = 12` e `password_requirements = "lower_upper_letters_digits"`. Verificado: a API recusa senha de 6 caracteres e recusa 12 caracteres sem maiúscula, com `422 weak_password`. A política vale para senhas novas; a senha em uso antes da mudança continua válida no login até ser trocada.
+
+Limites em `[auth.rate_limit]`: `email_sent = 4` por hora (segura a redefinição de senha, que é o caminho que um atacante usaria para inundar a caixa da administradora), `sign_in_sign_ups = 10`, `token_verifications = 10` e `token_refresh = 150` por 5 minutos por IP. O link de redefinição expira em 10 minutos (`otp_expiry`), o mesmo do antigo link mágico.
+
+**Limitação confirmada, não resolvida:** `sign_in_sign_ups` não protege o login por senha na plataforma gerenciada. Foram feitas 43 tentativas seguidas de senha errada, do mesmo IP, contra `/auth/v1/token?grant_type=password`, e nenhuma recebeu `429`. Ou seja, não há freio efetivo de força bruta no endpoint de login. As defesas reais disponíveis são CAPTCHA (`captcha_enabled`/`captcha_provider`/`captcha_secret`, com hCaptcha ou Turnstile, exigindo widget no frontend e o segredo via `env(...)`, nunca no Git) e MFA TOTP, já habilitada na configuração mas ainda sem tela de ativação no painel. Enquanto nenhuma das duas existir, a força da senha é a única barreira.
+
+`supabase db advisors --type security` aponta três `SECURITY DEFINER` chamáveis por `authenticated`: `ritua_is_admin`, `ritua_move_stock` e `ritua_save_product`. É intencional — elas precisam de `SECURITY DEFINER` para escrever, e cada uma valida `ritua_is_admin()` na entrada (`raise exception 'Acesso não autorizado'`), com as políticas de RLS repetindo a checagem. O quarto aviso, "Leaked Password Protection Disabled", continua aberto: ligar em Authentication > Providers > Email no dashboard e conferir depois, com um `config push` seguido de novo `advisors`, se a opção sobrevive ao push.
+
+Os retornos de autenticação do GitHub Pages (`espi0-bat.github.io`) foram removidos da lista; sobraram o domínio próprio e os endereços locais de desenvolvimento.
 
 ## Dados e operações
 
