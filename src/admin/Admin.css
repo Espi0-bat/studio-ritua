@@ -64,3 +64,9 @@
   .admin-modal { padding: 20px; }
   .admin-header > a:last-child { white-space: nowrap; }
 }
+.admin-catalog-preview { min-width: 0; }
+.admin-catalog-preview .gallery { margin-inline: 0; }
+.admin-catalog-preview .gallery__open { padding: 0; border-radius: 26px; background: var(--cherry); }
+.admin-catalog-preview .gallery__carousel-controls button { padding: 0; border-radius: 50%; font-size: 24px; }
+.admin-catalog-preview .gallery__close { background: var(--cream); }
+@media (max-width: 600px) { .admin-catalog-preview .gallery__open { border-radius: 16px; } }

@@ -145,3 +145,13 @@ Esta etapa não altera os produtos do site público. A publicação do painel de
 - [x] Corrigir a rolagem ao alternar entre painel e site: “Ver site” volta ao topo; destinos de seções continuam respeitados.
 
 Correções incluídas na publicação autorizada do painel de demonstração. O endereço do painel é `https://espi0-bat.github.io/studio-ritua/#/admin`; os dados continuam locais ao navegador, sem login ou sincronização.
+
+## 12. Catálogo organizado por tipo
+
+- [x] Apresentar cases, piteiras e cuias em seções verticais, nesta ordem, com os títulos e a apresentação das cuias preservados.
+- [x] Compartilhar a regra de classificação entre a galeria e a vitrine de demonstração do painel. O campo “Tipo de produto” define a seção; editar o tipo move a peça e rascunhos não aparecem.
+- [x] Usar um carrossel lateral independente por seção, com repetição circular quando houver duas ou mais peças. Categorias com uma peça exibem o único item sem duplicação artificial; categorias vazias na prévia explicam como adicionar.
+- [x] Preservar os avisos de exemplo e indisponibilidade existentes, fotos, modais e conteúdo das demais áreas.
+- [x] Validar 12 testes Node e, no navegador, classificação, troca de tipo, rascunhos, carrosséis nos dois sentidos em celular e desktop, modais e ausência de overflow.
+
+O painel ainda usa dados locais de demonstração. A integração do catálogo real depende do projeto Supabase; entrar na organização não conecta automaticamente o site.

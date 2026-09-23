@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { demoCatalog } from '../services/demoCatalog'
 import { actionLabels, categories, statusOf } from '../services/inventory'
 import { preparePhotos } from './photos'
+import Gallery from '../components/Gallery'
+import { toGalleryProduct } from '../services/catalogSections'
 import './Admin.css'
 const money = cents => (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 const blank = () => ({ name: '', category: 'Cuia', priceCents: 0, description: '', photos: [], published: false, quantity: 1 })
@@ -37,8 +39,9 @@ function Editor({ initial, onClose, onSave }) {
   return <Modal title={form.id ? 'Editar peça' : 'Nova peça'} onClose={onClose} busy={busy}>
     <form onSubmit={submit}><fieldset disabled={busy}>
       <label>Nome da peça<input autoFocus required maxLength={100} value={form.name} onChange={e => change('name', e.target.value)} placeholder="Ex.: Cuia Aurora" /></label>
-      <div className="admin-fields"><label>Categoria<select value={form.category} onChange={e => change('category', e.target.value)}>{categories.map(c => <option key={c}>{c}</option>)}</select></label>
+      <div className="admin-fields"><label>Tipo de produto<select value={form.category} onChange={e => change('category', e.target.value)}>{categories.map(c => <option key={c}>{c}</option>)}</select></label>
       <label>Preço (R$)<input type="number" min="0" step="0.01" required value={price} onChange={e => setPrice(e.target.value)} /></label></div>
+      <p className="admin-help">O tipo escolhido coloca a peça automaticamente na seção correspondente da vitrine.</p>
       <label>Descrição<textarea rows={3} maxLength={2000} value={form.description} onChange={e => change('description', e.target.value)} placeholder="Cores, materiais e detalhes da peça" /></label>
       {!form.id && <label>Quantidade inicial<input type="number" min="0" max="9999" step="1" required value={form.quantity} onChange={e => change('quantity', e.target.value)} /></label>}
       <label>Fotos · até 4<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={upload} /></label>
@@ -105,7 +108,7 @@ export default function Admin() {
         const p = products.find(p => p.id === event.productId)
         const last = state.events.find(e => e.productId === event.productId)
         return <li key={event.id}><div><strong>{p?.name || 'Peça'}</strong><p>{actionLabels[event.action] || 'Estoque inicial'} · {event.quantity} unidade(s)</p><small>{new Date(event.at).toLocaleString('pt-BR')}</small></div>{last.id === event.id && !['undo', 'initial'].includes(event.action) && <button onClick={() => setMovement({ product: p, action: 'undo', event })}>Desfazer</button>}</li>
-      })}</ol>}</section> : <>
+      })}</ol>}</section> : view === 'showcase' ? <div className="admin-catalog-preview"><p className="admin-help">As peças publicadas são organizadas pelo tipo: cases, piteiras e cuias. Esta prévia não altera o site público.</p><Gallery products={products.map(toGalleryProduct)} preview /></div> : <>
         {view === 'showcase' && <p className="admin-help">Prévia das peças marcadas para exibição. Esta lista não altera o site público.</p>}
         <div className="admin-filters"><label>Buscar peça<input type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Nome da peça" /></label><label>Mostrar<select value={filter} onChange={e => setFilter(e.target.value)}>{['Todas', 'Disponível', 'Reservado', 'Esgotado', ...(view === 'showcase' ? [] : ['Rascunho'])].map(f => <option key={f}>{f}</option>)}</select></label></div>
         <div className="admin-grid">{visible.map(p => <article className="admin-card" key={p.id}>

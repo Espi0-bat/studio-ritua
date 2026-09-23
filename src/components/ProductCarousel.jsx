@@ -1,7 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useId, useRef } from 'react'
 
 // Three finite copies provide room to wrap in either direction without growing the DOM.
-export default function ProductCarousel({ items, renderItem, reducedMotion }) {
+export default function ProductCarousel({ items, renderItem, reducedMotion, label = 'Produtos da Rituá' }) {
+  const id = useId()
+  const loop = items.length > 1
   const viewport = useRef(null)
   const cycle = useRef(0)
   const drag = useRef(null)
@@ -9,6 +11,7 @@ export default function ProductCarousel({ items, renderItem, reducedMotion }) {
 
   useEffect(() => {
     const element = viewport.current
+    if (!loop) { element.scrollLeft = 0; cycle.current = 0; return }
     let timer
     let previousCycle = 0
     const measure = () => {
@@ -47,15 +50,16 @@ export default function ProductCarousel({ items, renderItem, reducedMotion }) {
       element.removeEventListener('scroll', onScroll)
       element.removeEventListener('scrollend', wrap)
     }
-  }, [items.length])
+  }, [items.length, loop])
 
   const move = (direction) => {
+    if (!loop) return
     const element = viewport.current
     element.scrollBy({ left: direction * cycle.current / items.length, behavior: reducedMotion ? 'instant' : 'smooth' })
   }
 
   const endDrag = () => {
-    if (!drag.current) return
+    if (!drag.current || !loop) return
     const element = viewport.current
     drag.current = null
     element.classList.remove('gallery__carousel--dragging')
@@ -66,12 +70,12 @@ export default function ProductCarousel({ items, renderItem, reducedMotion }) {
   }
 
   return (
-    <div className="gallery__carousel-region" role="region" aria-roledescription="carrossel" aria-label="Produtos da Rituá">
-      <div className="gallery__carousel" id="ritua-products" ref={viewport}
+    <div className="gallery__carousel-region" role="region" aria-roledescription="carrossel" aria-label={label}>
+      <div className={`gallery__carousel${items.length === 2 ? ' gallery__carousel--pair' : ''}`} id={id} ref={viewport}
         onDragStart={event => event.preventDefault()}
         onPointerDown={event => {
           suppressClick.current = false
-          if (event.pointerType !== 'mouse' || event.button !== 0) return
+          if (!loop || event.pointerType !== 'mouse' || event.button !== 0) return
           drag.current = { start: event.clientX, scroll: viewport.current.scrollLeft }
         }}
         onPointerMove={event => {
@@ -90,6 +94,7 @@ export default function ProductCarousel({ items, renderItem, reducedMotion }) {
           if (suppressClick.current) { event.preventDefault(); event.stopPropagation() }
         }}
         onKeyDown={event => {
+          if (!loop) return
           if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
             event.preventDefault()
             const card = event.target.closest('[data-carousel-index]')
@@ -102,7 +107,7 @@ export default function ProductCarousel({ items, renderItem, reducedMotion }) {
           }
         }}>
         <div className="gallery__track">
-          {[0, 1, 2].flatMap(copy => items.map((item, index) => (
+          {(loop ? [0, 1, 2] : [1]).flatMap(copy => items.map((item, index) => (
             <figure className="gallery__item" key={`${copy}-${item.id}`}
               data-carousel-copy={copy} data-carousel-index={index}
               aria-hidden={copy !== 1 ? true : undefined}>
@@ -111,13 +116,13 @@ export default function ProductCarousel({ items, renderItem, reducedMotion }) {
           )))}
         </div>
       </div>
-      <div className="gallery__carousel-controls">
+      {loop && <div className="gallery__carousel-controls">
         <p>Deslize para ver as peças</p>
         <div>
-          <button type="button" aria-label="Produto anterior" aria-controls="ritua-products" onClick={() => move(-1)}>←</button>
-          <button type="button" aria-label="Próximo produto" aria-controls="ritua-products" onClick={() => move(1)}>→</button>
+          <button type="button" aria-label="Produto anterior" aria-controls={id} onClick={() => move(-1)}>←</button>
+          <button type="button" aria-label="Próximo produto" aria-controls={id} onClick={() => move(1)}>→</button>
         </div>
-      </div>
+      </div>}
     </div>
   )
 }

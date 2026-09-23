@@ -394,37 +394,19 @@
     font-size: 9px;
   }
 }
-.gallery__featured { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
-.gallery__feature h3 { font-family: var(--font-display); color: var(--cherry); font-size: 30px; font-weight: 400; margin: 20px 0 10px; }
-.gallery__feature > p { font-size: 15px; line-height: 1.7; max-width: 420px; }
-.gallery__featured .gallery__open img { aspect-ratio: 1; }
-.gallery__cuia-heading { margin-top: 80px; }
 .gallery__reference a { text-decoration: underline; }
-@media (max-width: 600px) {
-  .gallery__featured { grid-template-columns: 1fr; gap: 36px; }
-  .gallery__feature h3 { font-size: 26px; }
-  .gallery__cuia-heading { margin-top: 56px; }
-}
+.gallery__feature-caption { margin-top: 18px; font-size: 15px; line-height: 1.7; }
 
-.gallery__featured .gallery__feature:first-child .gallery__open img { object-fit: contain; background: white; }
-
-.gallery__feature { min-width: 0; }
-.gallery__feature-heading h2 { font-size: clamp(32px, 3.5vw, 48px); }
-.gallery__feature-heading p { font-size: 18px; line-height: 1.6; max-width: 440px; margin-top: 20px; }
-.gallery__feature-heading { margin-bottom: 28px; }
-.gallery__feature h3 { margin: 0 0 24px; }
-.gallery__feature-caption { margin-top: 18px; }
-
-/* Share heading and subtitle rows so both product photos start together. */
+.gallery__category + .gallery__category { margin-top: 80px; }
+.gallery__premium { font: 400 30px var(--font-display); color: var(--cherry); margin-bottom: 24px; }
+.gallery__open--reference img { object-fit: contain; background: white; }
+.gallery__placeholder { display: grid; place-items: center; aspect-ratio: 4 / 5; background: #e8ddc9; color: var(--cherry); }
+.gallery__card-price { margin-top: 10px; font-weight: 600; }
+.gallery__empty { padding: 24px 0; line-height: 1.6; }
 @media (min-width: 601px) {
-  .gallery__featured { row-gap: 0; }
-  .gallery__feature {
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: span 4;
-  }
-  .gallery__feature-heading { grid-row: 1; }
-  .gallery__feature > h3 { grid-row: 2; }
-  .gallery__feature > .gallery__open { grid-row: 3; align-self: start; }
-  .gallery__feature-caption { grid-row: 4; }
+  .gallery__carousel--pair .gallery__track > .gallery__item { flex-basis: calc((100% - 26px) / 2); }
+}
+@media (max-width: 600px) {
+  .gallery__category + .gallery__category { margin-top: 56px; }
+  .gallery__premium { font-size: 26px; }
 }
