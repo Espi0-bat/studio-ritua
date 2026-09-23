@@ -8,6 +8,12 @@ import { catalogSections, toGalleryProduct } from '../services/catalogSections'
 import './Admin.css'
 const money = cents => (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 const blank = () => ({ name: '', category: '', priceCents: 0, description: '', photos: [], published: false, quantity: 1 })
+const sectionHint = form => {
+  if (!form.category) return 'Escolha o tipo para definir a seção da peça na vitrine.'
+  const section = catalogSections.find(s => s.category === form.category)
+  const line = section.lines?.find(l => l.key === form.line)
+  return `Esta peça aparecerá em ${section.title.replace(/\.$/, '')}${line ? `, na linha ${line.title}` : ''}.`
+}
 function Modal({ title, children, onClose, busy }) {
   const ref = useRef(null)
   useEffect(() => { const dialog = ref.current; dialog.showModal(); return () => dialog.close() }, [])
@@ -48,7 +54,7 @@ function Editor({ initial, onClose, onSave, live }) {
       <label>Nome da peça<input autoFocus required maxLength={100} value={form.name} onChange={e => change('name', e.target.value)} placeholder="Ex.: Cuia Aurora" /></label>
       <div className="admin-fields"><label>Tipo de produto<select required value={form.category} onChange={e => change('category', e.target.value)}><option value="" disabled>Selecione o tipo</option>{categories.map(c => <option key={c}>{c}</option>)}</select></label>
       <label>Preço (R$)<input type="number" min="0" step="0.01" required value={price} onChange={e => setPrice(e.target.value)} /></label></div>
-      <p className="admin-help">{form.category ? `Esta peça aparecerá em ${catalogSections.find(section => section.category === form.category)?.title.replace(/\.$/, '')}.` : 'Escolha o tipo para definir a seção da peça na vitrine.'}</p>
+      <p className="admin-help">{sectionHint(form)}</p>
       <label>Descrição<textarea rows={3} maxLength={2000} value={form.description} onChange={e => change('description', e.target.value)} placeholder="Cores, materiais e detalhes da peça" /></label>
       <label className="admin-check"><input type="checkbox" checked={Boolean(form.isUnique)} onChange={e => change('isUnique', e.target.checked)} />Peça única</label>
       {form.category === 'Piteira' && <>
@@ -60,7 +66,8 @@ function Editor({ initial, onClose, onSave, live }) {
           <label>Diâmetro<input inputMode="decimal" value={form.diameter ?? ''} onChange={e => change('diameter', e.target.value)} placeholder="Ex.: 4,8" /></label>
           <label>Unidade do diâmetro<select value={form.diameterUnit ?? ''} onChange={e => change('diameterUnit', e.target.value)}><option value="">Selecione a unidade</option><option value="mm">mm</option><option value="cm">cm</option></select></label>
         </div>
-        <p className="admin-help">Medidas e modelo são opcionais. Preencha somente as informações confirmadas da peça.</p>
+        <label>Linha<select value={form.line ?? ''} onChange={e => change('line', e.target.value || null)}><option value="">Não informado</option><option value="Premium">Premium</option><option value="Classica">Clássica</option></select></label>
+        <p className="admin-help">Medidas, modelo e linha são opcionais. Preencha somente as informações confirmadas da peça. Sem linha definida, a peça aparece em Piteiras Clássicas.</p>
       </>}
       {form.category === 'Case' && <>
         <label>Compatível com<input maxLength={200} value={form.compatibleWith ?? ''} onChange={e => change('compatibleWith', e.target.value)} placeholder="Marca, modelo ou tamanho do isqueiro" /></label>

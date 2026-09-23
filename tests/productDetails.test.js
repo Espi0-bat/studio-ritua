@@ -20,6 +20,12 @@ test('medidas aceitam vírgula e ponto, com unidades explícitas',()=>{
  assert.throws(()=>normalizeDetails({...blank,diameterUnit:'mm'}))
  assert.throws(()=>normalizeDetails({...blank,diameter:2,diameterUnit:'m'}))
 })
+test('linha da piteira aceita Premium ou Clássica e não se aplica a outras categorias',()=>{
+ assert.equal(normalizeDetails({...blank,line:'Premium'}).line,'Premium')
+ assert.equal(normalizeDetails({...blank,line:'Classica'}).line,'Classica')
+ assert.equal(normalizeDetails({...blank,category:'Case',line:'Premium'}).line,null)
+ assert.throws(()=>normalizeDetails({...blank,line:'Luxo'}))
+})
 test('acompanha isqueiro diferencia não informado, sim e não',()=>{
  for(const [value,label] of [[null,undefined],[true,'Sim'],[false,'Não']]) {
   const p={category:'Case',...normalizeDetails({category:'Case',compatibleWith:'BIC grande',includesLighter:value})}

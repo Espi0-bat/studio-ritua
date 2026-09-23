@@ -33,7 +33,7 @@ async function load(publicOnly = false) {
     const productPhotos = photos.filter(photo => photo.product_id === p.id)
     return { id: p.id, name: p.name, category: p.category, description: p.description, priceCents: p.price_cents,
       isUnique: p.is_unique, lengthCm: p.length_cm, diameter: p.diameter, diameterUnit: p.diameter_unit,
-      model: p.model, compatibleWith: p.compatible_with, includesLighter: p.includes_lighter,
+      model: p.model, line: p.line, compatibleWith: p.compatible_with, includesLighter: p.includes_lighter,
       published: p.published, stock: p.stock, reserved: p.reserved, revision: p.revision,
       photos: productPhotos.map(photo => urls[photo.object_path]),
       photoMap: Object.fromEntries(productPhotos.map(photo => [urls[photo.object_path], photo.object_path])) }

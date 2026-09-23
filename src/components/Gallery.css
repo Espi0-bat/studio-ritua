@@ -402,6 +402,7 @@
 .gallery__feature-caption { margin-top: 18px; font-size: 15px; line-height: 1.7; }
 
 .gallery__category + .gallery__category { margin-top: 80px; }
+.gallery__group + .gallery__group { margin-top: 56px; }
 .gallery__premium { font: 400 30px var(--font-display); color: var(--cherry); margin-bottom: 24px; }
 .gallery__open--reference img { object-fit: contain; background: white; }
 .gallery__placeholder { display: grid; place-items: center; aspect-ratio: 4 / 5; background: #e8ddc9; color: var(--cherry); }
@@ -412,6 +413,7 @@
 }
 @media (max-width: 600px) {
   .gallery__category + .gallery__category { margin-top: 56px; }
+  .gallery__group + .gallery__group { margin-top: 36px; }
   .gallery__premium { font-size: 26px; }
 }
 .catalog-load-note { color: var(--cream); padding: 20px; text-align: center; }

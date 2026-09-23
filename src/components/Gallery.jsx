@@ -58,23 +58,27 @@ export default function Gallery({ products = staticProducts, preview = false }) 
               <div>{section.eyebrow && <p className="eyebrow">{section.eyebrow}</p>}<h2>{section.title}</h2></div>
               <p>{section.description}</p>
             </div>
-            {section.items.some(item => item.reference) && <h3 className="gallery__premium">Piteiras Premium</h3>}
-            {section.items.length ? <ProductCarousel items={section.items} label={section.title} reducedMotion={reducedMotion} renderItem={(item, index, duplicate) => (
-              <>
-                <button className={`gallery__open${item.reference ? ' gallery__open--reference' : ''}`} tabIndex={duplicate ? -1 : 0}
-                  onClick={event => {
-                    trigger.current = event.currentTarget.closest('.gallery__track').querySelector(`[data-carousel-copy="1"][data-carousel-index="${index}"] button`)
-                    setSelected(item.id)
-                  }} aria-label={`Ampliar foto: ${item.gridLabel}`} aria-haspopup="dialog">
-                  <ProductMedia product={item} reducedMotion={reducedMotion} />
-                  {(item.status || item.available === false) && <span className="gallery__stock">{item.status || 'Indisponível'}</span>}
-                  <span className="gallery__zoom" aria-hidden="true">Ampliar foto ↗</span>
-                </button>
-                <figcaption><span className="gallery__number">{String(index + 1).padStart(2, '0')}</span><h3>{item.gridLabel}</h3></figcaption>
-                {Number.isInteger(item.priceCents) && <p className="gallery__card-price">{formatPrice(item.priceCents)}</p>}
-              </>
-            )} /> : <p className="gallery__empty">{preview ? 'Nenhuma peça publicada nesta categoria. Selecione este tipo no cadastro para adicioná-la aqui.' : 'Novas peças serão apresentadas por aqui.'}</p>}
-            {section.items.some(item => item.reference) && <p className="gallery__feature-caption">Vitrine demonstrativa. A peça da foto não está disponível para compra.</p>}
+            {(section.groups || [{ items: section.items }]).map((group, gi) => (
+              <div className="gallery__group" key={group.key || gi}>
+                {group.title && <h3 className="gallery__premium">{group.title}</h3>}
+                {group.items.length ? <ProductCarousel items={group.items} label={group.title || section.title} reducedMotion={reducedMotion} renderItem={(item, index, duplicate) => (
+                  <>
+                    <button className={`gallery__open${item.reference ? ' gallery__open--reference' : ''}`} tabIndex={duplicate ? -1 : 0}
+                      onClick={event => {
+                        trigger.current = event.currentTarget.closest('.gallery__track').querySelector(`[data-carousel-copy="1"][data-carousel-index="${index}"] button`)
+                        setSelected(item.id)
+                      }} aria-label={`Ampliar foto: ${item.gridLabel}`} aria-haspopup="dialog">
+                      <ProductMedia product={item} reducedMotion={reducedMotion} />
+                      {(item.status || item.available === false) && <span className="gallery__stock">{item.status || 'Indisponível'}</span>}
+                      <span className="gallery__zoom" aria-hidden="true">Ampliar foto ↗</span>
+                    </button>
+                    <figcaption><span className="gallery__number">{String(index + 1).padStart(2, '0')}</span><h3>{item.gridLabel}</h3></figcaption>
+                    {Number.isInteger(item.priceCents) && <p className="gallery__card-price">{formatPrice(item.priceCents)}</p>}
+                  </>
+                )} /> : <p className="gallery__empty">{preview ? 'Nenhuma peça publicada nesta categoria. Selecione este tipo no cadastro para adicioná-la aqui.' : 'Novas peças serão apresentadas por aqui.'}</p>}
+                {group.items.some(item => item.reference) && <p className="gallery__feature-caption">Vitrine demonstrativa. A peça da foto não está disponível para compra.</p>}
+              </div>
+            ))}
           </section>
         ))}
       </div>

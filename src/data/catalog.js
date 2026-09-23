@@ -50,7 +50,7 @@ const cuias = [
 
 const featured = [
   {
-    id: 'piteira-exemplo',
+    id: 'piteira-exemplo', line: 'Premium',
     media: { type: 'image', src: piteiraExample, width: 1000, height: 1000 },
     gridLabel: 'Piteiras', title: 'Mona Brisa · Cápsula Coração', tag: 'Piteiras · Modelo de exemplo',
     subtitle: 'Uma referência para conhecer os detalhes de uma piteira. Esta foto é demonstrativa e não representa uma peça disponível para compra.',

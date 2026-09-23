@@ -10,6 +10,7 @@ function shortText(value, label, max) {
   if (text.length > max) throw new Error(`${label}: use até ${max} caracteres.`)
   return text || null
 }
+export const piteiraLines = ['Premium', 'Classica']
 export function normalizeDetails(input) {
   const isUnique = input.isUnique ?? null
   if (isUnique !== null && typeof isUnique !== 'boolean') throw new Error('Confira a indicação de peça única.')
@@ -21,10 +22,13 @@ export function normalizeDetails(input) {
   if (diameter === null && diameterUnit !== null) throw new Error('Informe o diâmetro ou deixe sua unidade sem seleção.')
   const includesLighter = isCase ? input.includesLighter ?? null : null
   if (includesLighter !== null && typeof includesLighter !== 'boolean') throw new Error('Informe se acompanha isqueiro: Sim, Não ou Não informado.')
+  const line = piteira ? input.line || null : null
+  if (line !== null && !piteiraLines.includes(line)) throw new Error('Selecione a linha da piteira: Premium ou Clássica.')
   return { isUnique,
     lengthCm: piteira ? measure(input.lengthCm, 'Comprimento') : null,
     diameter, diameterUnit,
     model: piteira ? shortText(input.model, 'Modelo', 120) : null,
+    line,
     compatibleWith: isCase ? shortText(input.compatibleWith, 'Compatível com', 200) : null,
     includesLighter }
 }

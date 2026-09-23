@@ -324,3 +324,82 @@ Implementação autorizada pelo usuário junto com a seção 15. A revisão abai
 - Build de produção aprovado. Teste de navegador com respostas simuladas em 390 e 1440 px aprovado: selo, ocultação/retorno de demonstrativo, retenção do catálogo após erro, abertura do aviso e ausência de transbordamento horizontal.
 - Pendências de informações legais e direitos de imagem continuam abertas na seção 15.4. Não foram inventados dados do fornecedor nem regras comerciais.
 - Alterações desta etapa ainda não publicadas no GitHub Pages.
+
+## 16. Separação das piteiras por linha (Premium / Clássica) e nova ordem das seções
+
+**Status: implementado localmente em 23/09/2026; migração Supabase ainda não aplicada e alterações ainda não publicadas.** Pedido recebido pela Duda no WhatsApp em 23/09/2026. Resultado detalhado na seção 16.7.
+
+### 16.1. Pedido da Duda (texto original)
+
+> da p gnt separar as piteiras? pq tem as "premium" e outras mais simples q são as classicas
+>
+> ai seria tipo
+>
+> Piteiras de vidro
+>
+> Piteiras Premium
+> Piteiras Classicas
+>
+> Cases de isqueiro
+
+E, em seguida: "vou catalogar lá pra ficar mais fácil" e "ai acho q seria bom ser as piteiras antes da cases, pq é oq mais vou ter quando chegar".
+
+Leitura do pedido:
+1. Dentro da seção "Piteiras de vidro", separar os produtos em duas subseções: **Piteiras Premium** e **Piteiras Clássicas**.
+2. Duda vai classificar cada piteira no painel (`/#/admin`) — ou seja, precisa existir um campo para isso no cadastro.
+3. Trocar a ordem das seções na vitrine: piteiras devem aparecer **antes** dos cases de isqueiro (hoje a ordem é cases → piteiras → cuias, fixada na seção 12 deste plano; este pedido substitui aquela decisão de ordem, não a de agrupar por tipo).
+
+### 16.2. Constatação no código atual
+
+- `src/services/inventory.js` define `categories = ['Cuia', 'Case', 'Piteira']` — enum fixo, sem subcategoria/linha.
+- `src/services/catalogSections.js` define título e ordem das seções; ordem atual: Case → Piteira → Cuia.
+- O subtítulo "Piteiras Premium", hoje exibido em `src/components/Gallery.jsx` (linha ~61), **não é um dado real do produto**: aparece automaticamente quando o item tem um campo `reference` (usado só na foto de referência da Madruga Shop). Não existe hoje nenhuma forma de a Duda marcar uma piteira como Premium ou Clássica.
+- Não existe campo de material/linha (`vidro`, `premium`, `clássica`) no banco (`ritua_products`), na RPC `ritua_save_product` nem no formulário do painel (`src/admin/Admin.jsx`).
+- Este pedido não estava previsto nem no escopo da seção 14 (que listava "cadastrar novas categorias" como fora do pedido daquela rodada).
+
+### 16.3. Mudanças propostas
+
+1. **Campo novo — linha da piteira.** Adicionar campo opcional (aplicável somente à categoria Piteira), com valores "Premium", "Clássica" ou não informado. Produtos antigos ficam sem valor até a Duda editar.
+2. **Painel (`Admin.jsx`).** Quando a categoria selecionada for Piteira, mostrar um seletor "Linha: Premium / Clássica / Não informado", seguindo o mesmo padrão dos campos condicionais já existentes (comprimento, diâmetro, modelo).
+3. **Persistência.** Nova migração Supabase (sem reaplicar as existentes), atualizando `ritua_products`, a RPC `ritua_save_product`, `src/services/liveCatalog.js`, `src/services/demoCatalog.js` e a validação em `src/services/productDetails.js`/`src/services/inventory.js`. Cadastros antigos sem o campo continuam válidos.
+4. **Ordem das seções (`catalogSections.js`).** Trocar a ordem para **Piteira → Case → Cuia**. As cuias continuam por último — não fazem parte deste pedido.
+5. **Agrupamento na vitrine (`Gallery.jsx`).** Remover a regra atual baseada em `item.reference` e passar a agrupar de verdade dentro da seção "Piteiras de vidro": subtítulo "Piteiras Premium" primeiro, depois "Piteiras Clássicas", usando o novo campo de linha. Peças sem linha definida (inclusive as antigas) entram em "Piteiras Clássicas" por padrão, para não desaparecerem da vitrine enquanto a Duda não reclassifica cada uma.
+6. **Estilo.** Reaproveitar o CSS do subtítulo "Piteiras Premium" já existente para a nova subseção "Piteiras Clássicas", sem redesenhar o layout.
+7. **Preservar** carrosséis laterais por seção/subseção, avisos de exemplo/indisponibilidade, fotos, modais, selo de peça única e ficha técnica (comprimento/diâmetro/modelo) já implementados na seção 14.
+
+### 16.4. Sequência de execução e conferência
+
+1. Preparar e aplicar a migração Supabase com o novo campo de linha, validando valores aceitos.
+2. Atualizar formulário do painel, adaptadores (`liveCatalog.js`, `demoCatalog.js`) e validação (`inventory.js`, `productDetails.js`).
+3. Atualizar `catalogSections.js` (nova ordem) e `Gallery.jsx` (agrupamento real por linha, remoção da regra baseada em `reference`).
+4. Ajustar estilos herdados do subtítulo "Piteiras Premium" para a subseção "Piteiras Clássicas".
+5. Testar cadastro/edição de piteira com cada valor de linha, produtos antigos sem linha (devem cair em Clássicas), troca de categoria, e os dois modos (demonstração e Supabase real).
+6. Conferir celular e desktop: nova ordem das seções, subtítulos dentro de piteiras, carrosséis, ausência de overflow.
+7. Executar `npm run build` e a suíte de testes Node antes de concluir.
+
+### 16.5. Fora deste pedido
+
+Alterar a ordem das cuias, criar categoria nova além da subdivisão de piteiras, mudar preço/estoque por linha, ou classificar automaticamente por nome/foto. Não inventar quais peças existentes são Premium ou Clássicas — a classificação é responsabilidade da Duda, feita no painel.
+
+### 16.6. Confirmação adicional da Duda — campos de comprimento, diâmetro e modelo
+
+Print recebido em 23/09/2026 (mensagem antiga da Duda, reenviada por ela para reforçar o pedido junto com a separação por linha): "ficou faltando só aquela parte p colocar os Cm e o diâmetro dela" + "e a opção Modelo" + lista "comprimento / diâmetro / modelo".
+
+**Isto não é um pedido novo.** Comprimento (cm), diâmetro (com unidade cm/mm) e modelo para piteiras já constam como implementados e validados na seção 14.3–14.7 deste plano, no cadastro (`Admin.jsx`), na ficha pública (`Gallery.jsx`) e no banco (migração `202609230003_product_details.sql`).
+
+- [x] Verificado no código e no histórico: os campos existem em `Admin.jsx` (linhas 54–63, condicionais a `category === 'Piteira'`), em `productDetails.js` (`normalizeDetails`/`productSpecs`) e na migração `202609230003_product_details.sql`. O commit `24889e6` ("Adiciona ficha técnica por tipo e indicação de peça única") é ancestral do HEAD atual da branch `feat/painel-ritua` (`d2d1073`), e o `gh-pages` já publicou esse HEAD (deploy `3a14804`, 23/09/2026 17:19). **Os campos já estão em produção.**
+- [x] Conclusão: não é regressão nem escopo novo. A Duda provavelmente só não preencheu comprimento/diâmetro/modelo em cada piteira já cadastrada. Orientar: editar cada piteira no painel (`/#/admin`) e preencher os três campos — eles já aparecem no formulário quando o tipo é "Piteira".
+
+### 16.7. Resultado da implementação
+
+- Campo `line` (Premium / Classica) criado como opcional e exclusivo de piteiras, validado em `normalizeDetails` (`src/services/productDetails.js`) e exportado como `piteiraLines`. Trocar o tipo da peça limpa o campo, como já acontece com as demais informações por categoria.
+- Migração `supabase/migrations/202609230004_piteira_line.sql` criada: coluna `line` com `check (line in ('Premium','Classica'))`, restrição `ritua_piteira_line_details` (só piteiras podem ter linha) e `ritua_save_product` atualizada para gravar o campo na mesma transação, preservando autorização, revisão concorrente e idempotência. Clientes antigos que omitem a chave preservam o valor salvo.
+- Painel (`src/admin/Admin.jsx`): seletor "Linha" com Premium, Clássica e "Não informado", exibido apenas quando o tipo é Piteira. A dica abaixo do tipo agora informa também a linha: "Esta peça aparecerá em Piteiras de vidro, na linha Piteiras Premium."
+- Ordem das seções alterada para **Piteira → Case → Cuia** em `src/services/catalogSections.js`, substituindo a ordem fixada no item 12. As cuias continuam por último.
+- `groupCatalog` passou a devolver subgrupos (`groups`) para categorias com linhas configuradas. Piteiras sem linha definida entram em "Piteiras Clássicas", a última da lista, para não sumirem da vitrine antes da reclassificação.
+- Galeria (`src/components/Gallery.jsx`): cada linha vira uma subseção com título próprio e carrossel independente. A regra antiga que mostrava "Piteiras Premium" com base no campo `reference` foi removida; o aviso "Vitrine demonstrativa" agora acompanha apenas o subgrupo que contém a peça de exemplo.
+- A peça editorial `piteira-exemplo` (referência Madruga Shop) recebeu `line: 'Premium'` em `src/data/catalog.js`, preservando a apresentação atual.
+- 23 testes Node aprovados, incluindo os novos casos de agrupamento por linha, adaptador e validação. Os testes de vitrine deixaram de depender da posição da categoria na lista. Build de produção e `git diff --check` aprovados.
+- Migração `202609230004_piteira_line.sql` **aplicada no Supabase em 23/09/2026** via `supabase db query --linked --file`, seguindo o mesmo procedimento das anteriores (sem `db push`). Conferido no banco: coluna `line` criada e há 1 piteira cadastrada, que segue em "Piteiras Clássicas" até receber uma linha.
+- Acesso temporário de teste reativado para `moutinhoezer@gmail.com` em `ritua_admin_emails`, com `temporary = true`, a pedido do usuário.
+- **Pendente:** conferir no navegador em celular e desktop; publicar no GitHub Pages; a Duda classificar cada piteira no painel; e **retirar o acesso temporário** (`delete from public.ritua_admin_emails where email='moutinhoezer@gmail.com';`) depois da aprovação.

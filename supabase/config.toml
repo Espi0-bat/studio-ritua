@@ -6,6 +6,8 @@ additional_redirect_urls = ["https://espi0-bat.github.io/studio-ritua/", "http:/
 enable_signup = false
 
 [auth.email]
+# Omitir "enabled" desliga o provedor inteiro no push e derruba o login de todos.
+enabled = true
 enable_signup = false
 enable_confirmations = true
 otp_length = 8
