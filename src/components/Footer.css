@@ -87,3 +87,42 @@
   .footer__inner { grid-template-columns: 1fr; gap: 2rem; }
   .footer__bottom { flex-direction: column; gap: 0.4rem; text-align: center; }
 }
+
+.footer__legal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding-block: 1.75rem;
+  border-top: 1px solid rgba(250,234,211,0.07);
+}
+.footer__legal summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: rgba(250,234,211,0.55);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.2s;
+}
+.footer__legal summary:hover { color: var(--cream); }
+.footer__legal p {
+  max-width: 75ch;
+  margin-top: 0.9rem;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: rgba(250,234,211,0.45);
+}
+.footer__legal a { color: rgba(250,234,211,0.7); }
+.footer__legal-piece { margin-top: 1.25rem; }
+.footer__legal h3 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(250,234,211,0.7);
+}
+.footer__legal ul {
+  max-width: 75ch;
+  margin: 0.6rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: rgba(250,234,211,0.45);
+}

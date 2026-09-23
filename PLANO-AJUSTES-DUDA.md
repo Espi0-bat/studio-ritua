@@ -319,7 +319,7 @@ Implementação autorizada pelo usuário junto com a seção 15. A revisão abai
 ### 15.6. Resultado local
 
 - Vitrine condicional por categoria implementada, com um único demonstrativo de cuia e sem alteração no banco ou nos estoques reais.
-- Selo de peça única e aviso técnico de privacidade implementados. Sem banner de consentimento para rastreadores inexistentes.
+- Selo de peça única e aviso técnico de privacidade implementados. Sem banner de consentimento para rastreadores inexistentes. **Atualização:** o aviso de privacidade foi removido do rodapé pelo usuário em 23/09/2026 (commit `d2d1073`) e reescrito na seção 19.
 - 20 testes automatizados aprovados, incluindo publicação por categoria, reserva, última venda, reposição e múltiplos produtos.
 - Build de produção aprovado. Teste de navegador com respostas simuladas em 390 e 1440 px aprovado: selo, ocultação/retorno de demonstrativo, retenção do catálogo após erro, abertura do aviso e ausência de transbordamento horizontal.
 - Pendências de informações legais e direitos de imagem continuam abertas na seção 15.4. Não foram inventados dados do fornecedor nem regras comerciais.
@@ -448,3 +448,49 @@ Removidos a rota, o modo de demonstração e os textos condicionais do painel ("
 ### 18.3. Conferência
 
 23 testes Node aprovados e build de produção aprovado após as remoções. Documentação atualizada em `src/admin/README.md` e `supabase/README.md`.
+
+## 19. Envio na FAQ e informações legais do site
+
+**Status: envio, privacidade e devoluções implementados localmente em 23/09/2026; identificação legal pendente com a Duda. Ainda não publicado.**
+
+### 19.1. Pedido
+
+Repassado pelo usuário: informar que envios por motoboy têm o valor calculado por quilômetro e que envios por transportadora têm cotação feita no privado — em ambos os casos, o combinado acontece na DM do Instagram. Junto disso, voltar a tratar as informações de privacidade do site para reduzir exposição jurídica. A Duda ainda vai escrever e enviar o texto de devoluções.
+
+Formato escolhido pelo usuário: **envio na seção de Dúvidas** (onde o cliente procura) e **privacidade no rodapé**; devoluções entram no rodapé junto da privacidade quando o texto chegar.
+
+### 19.2. Implementado
+
+- `src/components/FAQ.jsx`: nova pergunta "Como funciona o envio?", entre a encomenda personalizada e a volta ao estoque. O texto informa o cálculo por quilômetro no motoboy, a cotação por destino e tamanho na transportadora, e que o valor é passado na DM antes de fechar o pedido. Não foram inventados valores, taxa mínima, cidade-base, prazos nem transportadoras.
+- `src/components/Footer.jsx` e `Footer.css`: bloco "Privacidade e dados" reescrito e devolvido ao rodapé, como `<details>` com âncora `#privacidade`. O texto foi atualizado para a operação atual — a menção ao modo de demonstração saiu, porque a rota `/#/admin/demo` foi removida na seção 18.2. Estilo alinhado à escala discreta do rodapé, em faixa própria acima da linha de crédito.
+- `Footer.jsx`: seção "Trocas e devoluções" (âncora `#devolucoes`) com o texto enviado pela Duda, dividido por tipo de peça — cases, cuias e piteiras —, acima do bloco de privacidade.
+- 23 testes Node, build de produção e `git diff --check` aprovados.
+
+### 19.3. Pendente com a Duda
+
+A seção 15.4 continua aberta nestes pontos. Nada aqui deve ser preenchido por suposição.
+
+1. **Identificação legal:** nome completo ou razão social, CPF ou CNPJ (MEI serve) e cidade/UF. Confirmar `studioritua@gmail.com` como e-mail oficial de atendimento.
+2. **Envio:** cidade de onde sai o motoboy, se existe taxa mínima ou raio de atendimento, se há retirada em mãos, prazo para postar/despachar, e se a transportadora envia código de rastreio.
+3. **Pagamento:** formas aceitas. A regra de 50% + 50% para encomendas já está publicada na FAQ.
+4. **Devoluções:** falta definir quem paga o frete de retorno e como fica a peça personalizada. O texto principal chegou e está na seção 19.5.
+
+**Alerta jurídico a repassar:** venda por DM é venda a distância. O direito de arrependimento em 7 dias (art. 49 do CDC) e os prazos de vício do produto (art. 26 do CDC — 90 dias para bem durável) valem mesmo sem estarem escritos no site, e não deixam de valer por a peça ser personalizada ou feita sob encomenda. Uma cláusula que negue isso é nula e aumenta o risco em vez de reduzir. O texto da Duda pode explicar o processo, não excluir esses direitos.
+
+### 19.4. Fora deste pedido
+
+Banner de consentimento (não há rastreadores), página separada de políticas, alteração de preços, estoque ou layout da vitrine.
+
+### 19.5. Texto de devoluções — decisão do usuário
+
+Texto recebido da Duda em 23/09/2026 e publicado **como ela escreveu**, com apenas correções de português: "com a conosco" → "conosco", "Dm" → "DM", "de mesmo valor" → "do mesmo valor", e "As cases" → "Os cases", para acompanhar o gênero já usado no site (`src/data/catalog.js`). O título "Capinhas p isqueiro" virou "Cases de isqueiro", nome usado nas demais seções. Nenhuma condição comercial foi alterada, removida ou acrescentada.
+
+**Conflitos com o CDC apontados ao usuário antes da publicação:**
+
+1. **Garantia de 7 dias (cases) e 30 dias (cuias).** O prazo legal para reclamar de vício em bem durável é de 90 dias (art. 26, II). A garantia contratual é complementar à legal (art. 50) — pode ampliar, não reduzir. Prazo menor não vincula o consumidor.
+2. **"Não realizamos trocas após o recebimento ou uso" (piteiras).** Colide com o direito de arrependimento de 7 dias em compra a distância (art. 49), que independe de defeito ou justificativa, e com a garantia legal por vício. Peça delicada ou exclusiva não é exceção prevista em lei.
+3. **"15% de desconto em uma próxima compra" como uma das três opções.** As alternativas do art. 18, § 1º são substituição, restituição do valor pago ou abatimento proporcional do preço. O desconto pode ser oferecido a mais, não no lugar de uma delas.
+
+**Decisão:** o usuário foi informado dos três pontos, avaliou o risco e optou por publicar o texto na íntegra ("pode botar mesmo com os riscos"). Registro feito para que a origem da redação e a ciência do risco fiquem rastreáveis. Uma versão alternativa, que preservava a lógica por peça da Duda sem as cláusulas nulas, chegou a ser escrita e foi descartada a pedido do usuário; está no histórico desta conversa caso queiram retomá-la.
+
+Revisão por advogado continua recomendada e não foi feita. Esta análise é técnica e não substitui parecer jurídico.

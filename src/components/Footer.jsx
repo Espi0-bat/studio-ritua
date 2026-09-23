@@ -2,6 +2,37 @@ import { instagramUrl, instagramDirectUrl } from '../config'
 import logo from '../assets/logo.png'
 import './Footer.css'
 
+// Texto de trocas e devoluções escrito pela Duda, publicado a pedido do usuário com apenas
+// correções de português. Conflitos com os prazos do CDC registrados na seção 19.5 do PLANO-AJUSTES-DUDA.md.
+const returnsPolicy = [
+  {
+    title: 'Cases de isqueiro',
+    paragraphs: [
+      'Os cases de isqueiro têm garantia de 7 dias após o recebimento. Em caso de defeito de fabricação dentro desse período, entre em contato conosco pela DM do Instagram para que possamos avaliar e solucionar o caso.',
+    ],
+  },
+  {
+    title: 'Cuias',
+    paragraphs: [
+      'As cuias têm garantia de 30 dias após o recebimento. A garantia cobre defeitos de fabricação dentro desse período.',
+      'Após a avaliação, se for constatado defeito de fabricação, você poderá escolher entre:',
+    ],
+    options: [
+      'receber uma nova peça disponível do mesmo valor da peça original;',
+      'receber 15% de desconto em uma próxima compra; ou',
+      'receber o reembolso do valor pago.',
+    ],
+  },
+  {
+    title: 'Piteiras',
+    paragraphs: [
+      'Todas as piteiras são cuidadosamente verificadas antes do envio.',
+      'Por serem peças delicadas e muitas vezes exclusivas, não realizamos trocas após o recebimento ou uso. Confira o modelo escolhido antes de finalizar o pedido.',
+      'Caso a piteira chegue quebrada ou com algum problema aparente, entre em contato conosco pela DM e envie fotos e vídeos para avaliação.',
+    ],
+  },
+]
+
 export default function Footer() {
   const contact = instagramDirectUrl
   const year = new Date().getFullYear()
@@ -37,6 +68,26 @@ export default function Footer() {
           </div>
         )}
 
+      </div>
+      <div className="container footer__legal">
+        <details id="devolucoes">
+          <summary>Trocas e devoluções</summary>
+          {returnsPolicy.map(({ title, paragraphs, options }) => (
+            <div className="footer__legal-piece" key={title}>
+              <h3>{title}</h3>
+              {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {options && <ul>{options.map((option) => <li key={option}>{option}</li>)}</ul>}
+            </div>
+          ))}
+        </details>
+        <details id="privacidade">
+          <summary>Privacidade e dados</summary>
+          <p>Este aviso explica como a Studio Rituá trata os dados neste site. Para dúvidas ou pedidos sobre seus dados, escreva para <a href="mailto:studioritua@gmail.com">studioritua@gmail.com</a>.</p>
+          <p>O catálogo pode ser consultado sem cadastro. Não usamos ferramentas de publicidade nem de análise de comportamento. O site não recebe pagamentos e não tem formulário de pedido: o botão de contato abre uma conversa no Instagram, sujeita também à política de privacidade daquela plataforma.</p>
+          <p>O site é hospedado no GitHub Pages e o catálogo fica no Supabase. Quando você acessa o site, dados técnicos como endereço IP, navegador e registros de acesso podem ser processados para entregar o conteúdo e proteger o serviço.</p>
+          <p>No painel da loja, o e-mail identifica quem está autorizado e a sessão fica guardada no navegador para manter o acesso. Esse armazenamento tem finalidade funcional, não publicitária. Use “Sair” ao terminar; apagar os dados do site nas configurações do navegador também encerra a sessão.</p>
+          <p>Você pode solicitar informações sobre o tratamento dos seus dados, bem como o acesso, a correção ou a exclusão deles, observadas as obrigações legais aplicáveis. Este aviso será revisto se novos usos de dados forem adicionados.</p>
+        </details>
       </div>
       <div className="container footer__bottom">
         <p>© {year} Studio Rituá</p>
