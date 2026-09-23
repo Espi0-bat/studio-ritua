@@ -30,9 +30,13 @@
 /* Horizontal overflow belongs to this viewport, not to the page. */
 .gallery__carousel {
   overflow-x: auto;
-  overscroll-behavior-x: contain;
+  overscroll-behavior-x: auto;
   scrollbar-width: none;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-y: auto;
+  touch-action: auto;
+}
+.gallery__carousel--loop {
   cursor: grab;
 }
 .gallery__carousel::-webkit-scrollbar { display: none; }
