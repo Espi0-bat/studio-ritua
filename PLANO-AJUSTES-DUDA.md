@@ -120,3 +120,28 @@ O texto recebeu apenas correções de acentuação e pontuação e remoção da 
 - [x] Atualizar a faixa para “Feito à mão • Drops exclusivos • Peças únicas • Cases & cuias • Piteiras artísticas”.
 - [x] Remover o texto “As peças” acima de “Piteiras de vidro”.
 - [x] Reduzir o espaço no topo da galeria para 56px no desktop e 32px no celular.
+
+
+## 10. Painel de demonstração — branch `feat/painel-ritua`
+
+- [x] Criar uma área separada em `/#/admin`, carregada sob demanda.
+- [x] Criar cadastro, edição, duplicação, fotos, filtros, rascunhos e vitrine de demonstração.
+- [x] Implementar reservas, vendas, reposição, retirada, cancelamento e histórico com reversão.
+- [x] Salvar dados fictícios no navegador e informar os limites do modo de demonstração.
+- [x] Preparar migração SQL com permissões, histórico transacional e fotos protegidas para rascunhos.
+- [x] Documentar a futura conexão em `supabase/README.md` e o uso em `src/admin/README.md`.
+- [x] Validar nove testes automatizados de estoque e build com o caminho do Pages.
+- [x] Validar migração, permissões e operações em PostgreSQL local via PGlite, simulando os esquemas Auth e Storage. Não substitui os testes em Supabase.
+- [x] Conferir no Chromium os fluxos de cadastro com foto, reserva, venda, reversão, duplicação, persistência e navegação pública, além dos layouts em 390px e 1440px.
+- [ ] Conectar Auth, Storage e banco quando houver o projeto Supabase.
+- [ ] Validar permissões e concorrência no Supabase real antes de publicar o painel de produção.
+
+Esta etapa não altera os produtos do site público. A publicação do painel de demonstração no GitHub Pages foi autorizada posteriormente pelo usuário. Reservas nesta versão controlam quantidades; não há cadastro de pedidos ou clientes.
+
+## 11. Correções na prévia local
+
+- [x] Alinhar o início das fotos de piteiras e cases no desktop, compartilhando as linhas do cabeçalho e do subtítulo “Piteiras Premium”. Manter o empilhamento no celular.
+- [x] Conferir alinhamento no Chromium em 601, 800, 1440 e 1920px, e empilhamento em 390px. Build aprovado.
+- [x] Corrigir a rolagem ao alternar entre painel e site: “Ver site” volta ao topo; destinos de seções continuam respeitados.
+
+Correções incluídas na publicação autorizada do painel de demonstração. O endereço do painel é `https://espi0-bat.github.io/studio-ritua/#/admin`; os dados continuam locais ao navegador, sem login ou sincronização.

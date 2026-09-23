@@ -414,3 +414,17 @@
 .gallery__feature-heading { margin-bottom: 28px; }
 .gallery__feature h3 { margin: 0 0 24px; }
 .gallery__feature-caption { margin-top: 18px; }
+
+/* Share heading and subtitle rows so both product photos start together. */
+@media (min-width: 601px) {
+  .gallery__featured { row-gap: 0; }
+  .gallery__feature {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 4;
+  }
+  .gallery__feature-heading { grid-row: 1; }
+  .gallery__feature > h3 { grid-row: 2; }
+  .gallery__feature > .gallery__open { grid-row: 3; align-self: start; }
+  .gallery__feature-caption { grid-row: 4; }
+}
