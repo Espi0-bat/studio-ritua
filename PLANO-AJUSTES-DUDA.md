@@ -451,7 +451,7 @@ Removidos a rota, o modo de demonstração e os textos condicionais do painel ("
 
 ## 19. Envio na FAQ e informações legais do site
 
-**Status: envio, privacidade e devoluções implementados localmente em 23/09/2026; identificação legal pendente com a Duda. Ainda não publicado.**
+**Status: envio, privacidade e devoluções publicados em 23/09/2026; identificação legal pendente com a Duda.**
 
 ### 19.1. Pedido
 
@@ -494,3 +494,10 @@ Texto recebido da Duda em 23/09/2026 e publicado **como ela escreveu**, com apen
 **Decisão:** o usuário foi informado dos três pontos, avaliou o risco e optou por publicar o texto na íntegra ("pode botar mesmo com os riscos"). Registro feito para que a origem da redação e a ciência do risco fiquem rastreáveis. Uma versão alternativa, que preservava a lógica por peça da Duda sem as cláusulas nulas, chegou a ser escrita e foi descartada a pedido do usuário; está no histórico desta conversa caso queiram retomá-la.
 
 Revisão por advogado continua recomendada e não foi feita. Esta análise é técnica e não substitui parecer jurídico.
+
+### 19.6. Publicação
+
+- Commit `ba83fe1` na branch `feat/painel-ritua`, publicado na `gh-pages` pelo commit `2f7e19b`.
+- **Correção do procedimento de deploy.** A seção 16.7 registra `npm run build -- --base=/studio-ritua/`, que está desatualizado desde a migração para domínio próprio (`CNAME` = `studioritua.com.br`, commit `f0651bb` da `gh-pages`). O site é servido na raiz do domínio, então o build correto é **`npm run build`** sem `--base`; usar a base antiga quebraria o carregamento de todos os assets.
+- `CNAME` e `.nojekyll` não são gerados pelo build e não estão em `public/`. Precisam ser preservados a cada deploy: apagar só `assets/`, `index.html` e os favicons antes de copiar o `dist`. O diff da publicação confirmou alteração apenas nos bundles e no `index.html`.
+- Pendente de conferência visual no site no ar, em celular e desktop.
