@@ -7,13 +7,15 @@ export default function Hero() {
       <div className="container hero__inner">
         <div className="hero__content">
           <p className="eyebrow">Piteiras & cases · Studio Rituá</p>
-          <h1>Seu momento,{' '}<span>seu ritual.</span></h1>
-          <p className="hero__sub">Piteiras, cases de isqueiro e cuias. Cor e personalidade nos detalhes do seu ritual.</p>
+          <h1>Seu momento,{' '}<span>seu ritual.<svg className="hero__leaf" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="M32 52C22 50 14 46 8 38L22 41C13 33 7 24 5 15C17 20 25 28 28 37C25 22 27 10 32 2C37 10 39 22 36 37C39 28 47 20 59 15C57 24 51 33 42 41L56 38C50 46 42 50 32 52Z" /><path d="M32 43V61" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg></span></h1>
+          <div className="hero__sub">
+            <p>Se você gosta de peças diferentes e cheias de personalidade, chegou no lugar certo.</p>
+            <p>Piteiras de vidro, cases de isqueiro e cuias artesanais, feitas para quem valoriza exclusividade e qualidade.</p>
+          </div>
           <div className="hero__actions">
-            <a href="#galeria" className="btn">Conhecer as peças <span aria-hidden="true">↓</span></a>
+            <a href="#galeria" className="btn">Conheça nossas peças <span aria-hidden="true">↓</span></a>
             <a href={instagramDirectUrl} className="text-link" target="_blank" rel="noopener noreferrer">Falar pelo direct ↗</a>
           </div>
-          <p className="hero__note"><svg viewBox="0 0 72 42" aria-hidden="true"><path d="M3 6C14 34 37 39 64 14M48 14l18-3-5 18" /></svg>Detalhes que fazem o ritual.</p>
         </div>
         <figure className="hero__photo">
           <img src={photo} alt="Cases de isqueiro coloridos com detalhes em relevo da Rituá — peças indisponíveis" width="1125" height="1500" fetchPriority="high" />

@@ -47,6 +47,7 @@
   width: fit-content;
   padding-bottom: 16px;
   position: relative;
+  white-space: nowrap;
 }
 
 .hero h1 span::after {
@@ -68,27 +69,18 @@
   line-height: 1.6;
 }
 
-.hero__note {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: var(--font-note);
-  font-size: 26px;
-  line-height: 1.15;
-  color: var(--cream);
-  transform: rotate(-3deg);
-  margin-top: 27px;
+.hero__sub p + p {
+  margin-top: 16px;
 }
 
-.hero__note svg {
-  width: 58px;
-  height: 38px;
-  flex-shrink: 0;
-  fill: none;
-  stroke: var(--pink);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.hero__leaf {
+  display: inline-block;
+  width: .42em;
+  height: .5em;
+  margin-left: .08em;
+  fill: currentColor;
+  vertical-align: baseline;
+  transform: rotate(12deg);
 }
 
 .hero__actions {
@@ -158,11 +150,6 @@
     margin-block: 24px;
     max-width: 430px;
     font-size: 18px;
-  }
-
-  .hero__note {
-    margin-top: 22px;
-    font-size: 25px;
   }
 
   .hero__photo {

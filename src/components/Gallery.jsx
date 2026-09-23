@@ -115,26 +115,27 @@ export default function Gallery() {
   return (
     <section id="galeria" className="gallery section">
       <div className="container">
-        <div className="gallery__heading">
-          <div><p className="eyebrow">As peças</p><h2>Os detalhes do seu ritual.</h2></div>
-          <p>Piteiras a caminho. Cases esperando uma nova coleção.<br />Conheça o universo da Rituá.</p>
-        </div>
+        <p className="eyebrow">As peças</p>
         <div className="gallery__featured">
           {featured.map(item => (
             <article className="gallery__feature" key={item.id}>
+              <div className="gallery__feature-heading">
+                <h2>{item.reference ? 'Piteiras de vidro' : 'Cases de isqueiro'}</h2>
+                <p>{item.reference ? 'Mais conforto na sessão, fluxo mais limpo e sabor preservado do início ao fim.' : 'As últimas peças foram vendidas. Novos cases serão apresentados por aqui.'}</p>
+              </div>
+              {item.reference && <h3>Piteiras Premium</h3>}
               <button className="gallery__open" onClick={event => { trigger.current = event.currentTarget; setSelected(item.id) }} aria-haspopup="dialog" aria-label={`Ver detalhes: ${item.gridLabel}`}>
                 <ProductMedia product={item} reducedMotion={reducedMotion} />
                 <span className="gallery__stock">{item.status || 'Indisponível'}</span>
                 <span className="gallery__zoom">Ver detalhes ↗</span>
               </button>
-              <h3>{item.gridLabel === 'Outras formas' ? 'Cases de isqueiro' : item.gridLabel}</h3>
-              <p>{item.reference ? 'Piteiras em breve. A peça da foto é um modelo de exemplo.' : 'As últimas peças foram vendidas. Novos cases serão apresentados por aqui.'}</p>
+              {item.reference && <p className="gallery__feature-caption">Piteiras em breve. A peça da foto é um modelo de exemplo.</p>}
             </article>
           ))}
         </div>
         <div className="gallery__heading gallery__cuia-heading">
           <div><p className="eyebrow">Também fazem parte do ritual</p><h2>Nossas cuias.</h2></div>
-          <p>Feitas à mão em cerâmica plástica, com combinações de cores e detalhes que expressam o universo da Rituá.</p>
+          <p>Uma cuia feita para ser só sua — e deixar a sua sessão ainda mais especial.</p>
         </div>
         <ProductCarousel items={cuias} reducedMotion={reducedMotion} renderItem={(item, index, duplicate) => (
           <>

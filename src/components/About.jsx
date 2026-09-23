@@ -18,8 +18,10 @@ export default function About() {
               <span>uma a uma</span>
             </div>
           </div>
-          <p>Cor misturada, forma criada, uma peça de cada vez. É assim que as cuias e os cases ganham vida aqui na Rituá.</p>
-          <p>Trabalhamos a cerâmica plástica à mão, explorando combinações que carregam o nosso jeito de criar. Dos desenhos nas bordas aos pequenos relevos, o cuidado mora nos detalhes.</p>
+          <p>Uma cuia feita para ser só sua — e deixar a sua sessão ainda mais especial.</p>
+          <p>Cada cuia nasce uma por vez, com combinações de cores, formas e detalhes que fazem dela uma peça única.</p>
+          <p>O material é levemente maleável, não gruda e ajuda a aproveitar melhor a sua crema, evitando desperdícios.</p>
+          <p>Você também pode personalizar a sua com seu nome e escolher as cores que mais combinam com você e seu kit.</p>
           <a href="#galeria" className="text-link">Veja os detalhes nas fotos <span aria-hidden="true">↗</span></a>
         </div>
       </div>

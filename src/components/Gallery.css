@@ -399,3 +399,10 @@
 }
 
 .gallery__featured .gallery__feature:first-child .gallery__open img { object-fit: contain; background: white; }
+
+.gallery__feature { min-width: 0; }
+.gallery__feature-heading h2 { font-size: clamp(32px, 3.5vw, 48px); }
+.gallery__feature-heading p { font-size: 18px; line-height: 1.6; max-width: 440px; margin-top: 20px; }
+.gallery__feature-heading { margin-bottom: 28px; }
+.gallery__feature h3 { margin: 0 0 24px; }
+.gallery__feature-caption { margin-top: 18px; }
