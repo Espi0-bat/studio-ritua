@@ -1,4 +1,4 @@
-import { validateProduct, stockChange } from './inventory.js'
+import { validateProduct, stockChange } from '../src/services/inventory.js'
 const KEY = 'ritua-admin-demo-v1'
 const seed = () => ({ version: 1, products: [
   { id: 'demo-cuia', name: 'Cuia Aurora · exemplo', category: 'Cuia', description: 'Peça fictícia para experimentar o painel.', priceCents: 8500, photos: [], published: true, stock: 1, reserved: 0, revision: 0 },
@@ -70,7 +70,3 @@ export function createDemoCatalog(storage, lock, uuid = () => crypto.randomUUID(
     }),
   }
 }
-export const demoCatalog = createDemoCatalog({ getItem: key => localStorage.getItem(key), setItem: (key, value) => localStorage.setItem(key, value) }, fn => {
-  if (!navigator.locks) throw new Error('Use uma versão atual do Safari, Chrome ou Firefox para salvar a demonstração.')
-  return navigator.locks.request(KEY, fn)
-})

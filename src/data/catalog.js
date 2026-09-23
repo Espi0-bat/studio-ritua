@@ -1,4 +1,3 @@
-import piteiraExample from '../assets/images/piteira-exemplo-mona-brisa.jpg'
 import photo1672 from '../assets/images/ritua-1672.webp'
 import photo2200 from '../assets/images/ritua-2200.webp'
 import photo2219 from '../assets/images/ritua-2219.webp'
@@ -50,21 +49,11 @@ const cuias = [
 
 const featured = [
   {
-    id: 'piteira-exemplo', line: 'Premium',
-    media: { type: 'image', src: piteiraExample, width: 1000, height: 1000 },
-    gridLabel: 'Piteiras', title: 'Mona Brisa · Cápsula Coração', tag: 'Piteiras · Modelo de exemplo',
-    subtitle: 'Uma referência para conhecer os detalhes de uma piteira. Esta foto é demonstrativa e não representa uma peça disponível para compra.',
-    alt: 'Piteira de vidro Mona Brisa Cápsula Coração, modelo de exemplo da Madruga Shop',
-    status: 'Em breve · exemplo',
-    specs: { Comprimento: '113 mm (11,3 cm)', 'Diâmetro informado': '4,8 mm' },
-    reference: 'https://www.madrugashop.com/acessorios-headshop/piteiras-de-vidro/piteira-de-vidro-mona-brisa-capsula-coracao',
-  },
-  {
-    id: 'outras-formas', available: false,
+    id: 'outras-formas', available: false, category: 'Case',
     media: { type: 'image', src: photo9895, width: 1125, height: 1500 },
     gridLabel: 'Outras formas', title: 'Cases de isqueiro', tag: 'Acessórios · Studio Rituá',
     subtitle: 'Cases de isqueiro com pequenos detalhes em relevo. As unidades desta seleção acabaram.',
     alt: 'Cases de isqueiro coloridos decorados com cogumelos, rostos e personagens sobre uma mesa clara',
   },
 ]
-export const staticProducts = [...featured.map(item => ({ ...item, category: item.reference ? 'Piteira' : 'Case' })), ...cuias.filter(item => item.id === 'um-canto-do-ritual').map(item => ({ ...item, category: 'Cuia' }))].map(item => ({ ...item, published: true, showcase: true, available: false, status: 'Vitrine · Sem disponibilidade' }))
+export const staticProducts = [...featured, ...cuias.filter(item => item.id === 'um-canto-do-ritual').map(item => ({ ...item, category: 'Cuia' }))].map(item => ({ ...item, published: true, showcase: true, available: false, status: 'Vitrine · Sem disponibilidade' }))

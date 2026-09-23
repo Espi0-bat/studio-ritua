@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { instagramDirectUrl, instagramUrl } from '../config'
+import { instagramDirectUrl } from '../config'
 import { staticProducts } from '../data/catalog'
 import { groupCatalog } from '../services/catalogSections'
 import './Gallery.css'
@@ -48,7 +48,6 @@ export default function Gallery({ products = staticProducts, preview = false }) 
   }, [selected])
   useEffect(() => { if (selected && !products.some(p => p.id === selected)) setSelected(null) }, [products, selected])
   const product = products.find(item => item.id === selected)
-  const contact = product?.reference ? instagramUrl : instagramDirectUrl
   return (
     <section id="galeria" className="gallery section">
       <div className="container">
@@ -63,7 +62,7 @@ export default function Gallery({ products = staticProducts, preview = false }) 
                 {group.title && <h3 className="gallery__premium">{group.title}</h3>}
                 {group.items.length ? <ProductCarousel items={group.items} label={group.title || section.title} reducedMotion={reducedMotion} renderItem={(item, index, duplicate) => (
                   <>
-                    <button className={`gallery__open${item.reference ? ' gallery__open--reference' : ''}`} tabIndex={duplicate ? -1 : 0}
+                    <button className="gallery__open" tabIndex={duplicate ? -1 : 0}
                       onClick={event => {
                         trigger.current = event.currentTarget.closest('.gallery__track').querySelector(`[data-carousel-copy="1"][data-carousel-index="${index}"] button`)
                         setSelected(item.id)
@@ -76,7 +75,6 @@ export default function Gallery({ products = staticProducts, preview = false }) 
                     {Number.isInteger(item.priceCents) && <p className="gallery__card-price">{formatPrice(item.priceCents)}</p>}
                   </>
                 )} /> : <p className="gallery__empty">{preview ? 'Nenhuma peça publicada nesta categoria. Selecione este tipo no cadastro para adicioná-la aqui.' : 'Novas peças serão apresentadas por aqui.'}</p>}
-                {group.items.some(item => item.reference) && <p className="gallery__feature-caption">Vitrine demonstrativa. A peça da foto não está disponível para compra.</p>}
               </div>
             ))}
           </section>
@@ -103,8 +101,7 @@ export default function Gallery({ products = staticProducts, preview = false }) 
               ))}
             </dl>}
             {Number.isInteger(product.priceCents) && <p className="gallery__price">{formatPrice(product.priceCents)}</p>}
-            {product.reference && <p className="gallery__reference">Modelo de exemplo, sem disponibilidade na Rituá. Foto e medidas: <a href={product.reference} target="_blank" rel="noopener noreferrer">Madruga Shop</a>. A referência não especifica se o diâmetro é interno ou externo.</p>}
-            <a className="btn" href={contact} target="_blank" rel="noopener noreferrer">{product.reference ? 'Acompanhar no Instagram' : 'Falar pelo direct'} <span aria-hidden="true">↗</span></a>
+            <a className="btn" href={instagramDirectUrl} target="_blank" rel="noopener noreferrer">Falar pelo direct <span aria-hidden="true">↗</span></a>
           </div>
         </div>}
       </dialog>

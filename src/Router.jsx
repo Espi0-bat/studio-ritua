@@ -15,5 +15,5 @@ export default function Router() {
     else window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
   }, [admin, hash])
   useEffect(() => { document.title = admin ? 'Painel — Studio Rituá' : 'Studio Rituá — Piteiras, cases e cuias' }, [admin])
-  return admin ? <Suspense fallback={<p style={{ padding: 24, color: 'var(--cream)' }} role="status">Abrindo painel…</p>}><Admin key={hash === '#/admin/demo' ? 'demo' : 'live'} /></Suspense> : <App />
+  return admin ? <Suspense fallback={<p style={{ padding: 24, color: 'var(--cream)' }} role="status">Abrindo painel…</p>}><Admin /></Suspense> : <App />
 }

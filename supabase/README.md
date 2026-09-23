@@ -8,7 +8,7 @@ Projeto: `zyytoorozczdlqgcqwpe` (Studio Ritua). O frontend usa URL e chave publi
 
 A proprietária e o usuário temporário de teste foram autorizados conforme a conversa, em registros no banco (não em uma lista no frontend). Para retirar o acesso temporário depois da aprovação, excluir a linha correspondente em `ritua_admin_emails`. A checagem no banco impede novas consultas privadas e alterações mesmo que o usuário ainda tenha uma sessão válida. Dados já carregados no navegador não podem ser apagados remotamente.
 
-`/#/admin/demo` continua separado, com dados locais fictícios e aviso explícito. Sem configuração, somente o desenvolvimento local pode cair automaticamente na demonstração; um build de produção sem configuração mostra indisponibilidade no painel real.
+A rota de demonstração `/#/admin/demo` foi removida. Sem configuração, o painel mostra indisponibilidade em vez de dados fictícios.
 
 ## Dados e operações
 

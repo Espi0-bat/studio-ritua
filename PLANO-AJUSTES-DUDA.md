@@ -402,4 +402,49 @@ Print recebido em 23/09/2026 (mensagem antiga da Duda, reenviada por ela para re
 - 23 testes Node aprovados, incluindo os novos casos de agrupamento por linha, adaptador e validação. Os testes de vitrine deixaram de depender da posição da categoria na lista. Build de produção e `git diff --check` aprovados.
 - Migração `202609230004_piteira_line.sql` **aplicada no Supabase em 23/09/2026** via `supabase db query --linked --file`, seguindo o mesmo procedimento das anteriores (sem `db push`). Conferido no banco: coluna `line` criada e há 1 piteira cadastrada, que segue em "Piteiras Clássicas" até receber uma linha.
 - Acesso temporário de teste reativado para `moutinhoezer@gmail.com` em `ritua_admin_emails`, com `temporary = true`, a pedido do usuário.
-- **Pendente:** conferir no navegador em celular e desktop; publicar no GitHub Pages; a Duda classificar cada piteira no painel; e **retirar o acesso temporário** (`delete from public.ritua_admin_emails where email='moutinhoezer@gmail.com';`) depois da aprovação.
+- Aprovado pelo usuário e publicado em 23/09/2026: commit `869c02f` na branch `feat/painel-ritua` e build publicado no GitHub Pages (`gh-pages`, commit `2d0bd09`), pelo procedimento manual das entregas anteriores (`npm run build -- --base=/studio-ritua/` e cópia do `dist`).
+- **Pendente:** conferir no navegador em celular e desktop; a Duda classificar cada piteira no painel; e **retirar o acesso temporário** (`delete from public.ritua_admin_emails where email='moutinhoezer@gmail.com';`) depois da aprovação.
+
+## 17. Incidente — login do painel desativado para todos
+
+**Status: causa identificada e corrigida no repositório; correção ainda não aplicada no Supabase.**
+
+Ao tentar entrar no painel em 23/09/2026, o pedido de link falhou. A API do Supabase respondeu `HTTP 422 email_provider_disabled` ("Email logins are disabled") — ou seja, não é problema de e-mail, de destinatário ou de limite de envio.
+
+**Causa: não confirmada.** A primeira hipótese foi que o commit `437787a` ("chore: desativa signup e configura timeout de sessao") teria desligado o provedor junto com o cadastro, ao rodar `supabase config push` sem declarar `enabled` em `[auth.email]`. **Essa hipótese foi testada e não se sustenta:** com `enabled = true` declarado, o `supabase config push` responde "Remote Auth config is up to date" e o provedor continua desligado. O CLI não envia o liga/desliga do provedor de e-mail para projetos hospedados — esse campo do `config.toml` vale para o ambiente local. Logo, o push do commit também não teria como ter desligado o provedor, e a desativação provavelmente veio de uma alteração no painel do Supabase. Não há registro de quem ou quando.
+
+**Efeito:** ninguém consegue entrar no painel, incluindo a proprietária (`studioritua@gmail.com`). A Duda está sem acesso ao painel dela desde esse push e não consegue cadastrar nem classificar as piteiras. As peças já publicadas e o site público não foram afetados.
+
+**Correção — só pelo painel do Supabase.** Authentication → Sign In / Providers → Email → **Enable email provider**, deixando "Allow new users to sign up" desligado. O CLI não resolve: não existe subcomando para esse campo e o `config push` o ignora em projeto hospedado.
+
+`enabled = true` ficou declarado em `[auth.email]` (commit `869c02f`) para o ambiente local e como documentação da intenção, mas não substitui o ajuste no painel.
+
+Conferir depois com `GET /auth/v1/settings`: `external.email` deve voltar a `true` e `disable_signup` deve continuar `true`.
+
+**Aprendizado:** o `config.toml` não descreve por completo a configuração de um projeto hospedado. Alterações feitas no painel não aparecem no repositório e não são detectadas por `config push`, que reporta "up to date" mesmo com divergência real.
+
+**Resolvido em 23/09/2026** pelo usuário, no painel do Supabase. Conferido em `GET /auth/v1/settings`: `external.email` voltou a `true` e o login funciona.
+
+**Pendência aberta:** no mesmo ajuste, `disable_signup` passou a `false` — o cadastro de novos usuários ficou liberado, ao contrário da intenção do commit `437787a`. Um cadastro novo **não** dá acesso ao painel (a autorização continua exigindo o e-mail em `ritua_admin_emails`), mas permite que estranhos criem contas e consumam a cota de e-mail do projeto. Desligar "Allow new users to sign up" no mesmo painel.
+
+## 18. Remoção da peça de referência e da rota de demonstração
+
+**Status: implementado em 23/09/2026, a pedido do usuário.**
+
+### 18.1. Peça de exemplo da Madruga Shop
+
+Removida a peça `piteira-exemplo` (foto e medidas da Madruga Shop) e sua imagem `piteira-exemplo-mona-brisa.jpg`. O site passa a usar apenas imagens da própria Rituá, encerrando a pendência de licença de imagem de terceiro registrada na seção 15.4.
+
+Sem efeito visual: a "Piteira Artística" da Duda já está publicada com estoque, e a vitrine por categoria (seção 15) já ocultava a foto de exemplo. Se todas as piteiras forem vendidas, a seção passa a exibir "Novas peças serão apresentadas por aqui." em vez da foto de terceiro.
+
+Com a peça saiu todo o código dependente do campo `reference`: classe de imagem própria, legenda "Vitrine demonstrativa", parágrafo de crédito e o botão que levava ao perfil do Instagram em vez do direct. O contato dos detalhes agora é sempre o direct.
+
+### 18.2. Rota `/#/admin/demo`
+
+Removidos a rota, o modo de demonstração e os textos condicionais do painel ("Modo de demonstração", "Exportar demonstração", "Vitrine de demonstração", "Peça salva na demonstração"). O painel agora existe só conectado ao Supabase; sem configuração, mostra indisponibilidade.
+
+`createDemoCatalog` passou de `src/services/` para `tests/demoCatalog.js`, onde continua servindo de implementação em memória para os testes de estoque. O singleton que gravava em `localStorage` foi removido. O bundle do painel caiu de 22,2 kB para 18,3 kB.
+
+### 18.3. Conferência
+
+23 testes Node aprovados e build de produção aprovado após as remoções. Documentação atualizada em `src/admin/README.md` e `supabase/README.md`.

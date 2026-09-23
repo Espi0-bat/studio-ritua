@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { demoCatalog } from '../services/demoCatalog'
 import { actionLabels, categories, statusOf } from '../services/inventory'
 import { preparePhotos } from './photos'
 import Gallery from '../components/Gallery'
@@ -21,7 +20,7 @@ function Modal({ title, children, onClose, busy }) {
     <header><h2 id="admin-modal-title">{title}</h2><button type="button" disabled={busy} onClick={onClose} aria-label="Fechar janela">✕</button></header>{children}
   </dialog>
 }
-function Editor({ initial, onClose, onSave, live }) {
+function Editor({ initial, onClose, onSave }) {
   const [form, setForm] = useState(initial)
   const [price, setPrice] = useState((initial.priceCents / 100).toFixed(2))
   const [busy, setBusy] = useState(false)
@@ -77,8 +76,8 @@ function Editor({ initial, onClose, onSave, live }) {
       <label>Fotos · até 4<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={upload} /></label>
       <p className="admin-help">JPG, PNG ou WebP. A primeira foto será a capa.</p>
       <div className="admin-photos">{form.photos.map((photo, i) => <div key={i}><img src={photo} alt={`Foto ${i + 1} da peça`} /><button type="button" onClick={() => change('photos', form.photos.filter((_, n) => n !== i))}>Remover foto {i + 1}</button></div>)}</div>
-      <label className="admin-check"><input type="checkbox" checked={form.published} onChange={e => change('published', e.target.checked)} />{live ? 'Publicar no site' : 'Exibir na vitrine de demonstração'}</label>
-      <p className="admin-help">{live ? 'Desmarcada, a peça fica como rascunho e não aparece no site.' : 'Desmarcada, a peça fica como rascunho. O site público não muda nesta demonstração.'}</p>
+      <label className="admin-check"><input type="checkbox" checked={form.published} onChange={e => change('published', e.target.checked)} />Publicar no site</label>
+      <p className="admin-help">Desmarcada, a peça fica como rascunho e não aparece no site.</p>
       <button className="admin-primary" type="submit">{busy ? 'Salvando…' : 'Salvar peça'}</button>
     </fieldset>{error && <p className="admin-error" role="alert">{error}</p>}</form>
   </Modal>
@@ -102,7 +101,7 @@ function Movement({ product, action, event, onClose, onSave }) {
     {error && <p role="alert" className="admin-error">{error}</p>}<button disabled={busy} className="admin-primary">{busy ? 'Salvando…' : 'Confirmar'}</button>
   </form></Modal>
 }
-export default function Admin({ catalog = demoCatalog, live = false, userEmail, onSignOut }) {
+export default function Admin({ catalog, userEmail, onSignOut }) {
   const [state, setState] = useState(null)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -112,33 +111,33 @@ export default function Admin({ catalog = demoCatalog, live = false, userEmail, 
   const [editor, setEditor] = useState(null)
   const [movement, setMovement] = useState(null)
   async function reload() { try { setState(await catalog.load()); setError('') } catch (e) { setError(e.message) } }
-  useEffect(() => { reload(); const handler = () => reload(); window.addEventListener(live ? 'focus' : 'storage', handler); const timer = live ? setInterval(handler, 60000) : null; return () => { window.removeEventListener(live ? 'focus' : 'storage', handler); if (timer) clearInterval(timer) } }, [])
-  async function save(input, revision, operationId) { try { setState(await catalog.save(input, revision, operationId)); setNotice(live ? 'Peça salva. As alterações publicadas já podem aparecer no site.' : 'Peça salva na demonstração.') } catch (e) { await reload(); throw e } }
+  useEffect(() => { reload(); const handler = () => reload(); window.addEventListener('focus', handler); const timer = setInterval(handler, 60000); return () => { window.removeEventListener('focus', handler); clearInterval(timer) } }, [])
+  async function save(input, revision, operationId) { try { setState(await catalog.save(input, revision, operationId)); setNotice('Peça salva. As alterações publicadas já podem aparecer no site.') } catch (e) { await reload(); throw e } }
   async function move(p, action, quantity, operationId, event) {
-    try { setState(action === 'undo' ? await catalog.undo(p.id, p.revision, event.id, operationId, event.quantity) : await catalog.move(p.id, p.revision, action, quantity, operationId)); setNotice(live ? 'Estoque atualizado.' : 'Estoque atualizado na demonstração.') }
+    try { setState(action === 'undo' ? await catalog.undo(p.id, p.revision, event.id, operationId, event.quantity) : await catalog.move(p.id, p.revision, action, quantity, operationId)); setNotice('Estoque atualizado.') }
     catch (e) { await reload(); throw e }
   }
   function exportData() {
     const url = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' }))
-    const a = document.createElement('a'); a.href = url; a.download = live ? 'ritua-catalogo.json' : 'ritua-demonstracao.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
+    const a = document.createElement('a'); a.href = url; a.download = 'ritua-catalogo.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
   const products = state?.products || []
   const visible = products.filter(p => p.name.toLocaleLowerCase('pt-BR').includes(search.toLocaleLowerCase('pt-BR')) && (view !== 'showcase' || p.published) && (filter === 'Todas' || (filter === 'Reservado' ? p.reserved > 0 : statusOf(p) === filter)))
   return <main className="admin">
-    <header className="admin-header"><a className="admin-brand" href="#/admin">studio rituá<span>Seu painel de peças</span></a><div className="admin-account">{live && <><span>{userEmail}</span><button onClick={async () => { try { await onSignOut() } catch (e) { setError(e.message) } }}>Sair</button></>}<a href="#">Ver site ↗</a></div></header>
-    <aside className={`admin-banner${live ? ' admin-live-banner' : ''}`}><strong>{live ? 'Painel conectado' : 'Modo de demonstração'}</strong><p>{live ? 'Suas peças e o estoque ficam salvos na conta do studio. Publique uma peça para exibi-la na categoria correspondente do site.' : 'Experimente à vontade. Os dados ficam só neste navegador e não alteram o site.'}</p></aside>
+    <header className="admin-header"><a className="admin-brand" href="#/admin">studio rituá<span>Seu painel de peças</span></a><div className="admin-account"><span>{userEmail}</span><button onClick={async () => { try { await onSignOut() } catch (e) { setError(e.message) } }}>Sair</button><a href="#">Ver site ↗</a></div></header>
+    <aside className="admin-banner admin-live-banner"><strong>Painel conectado</strong><p>Suas peças e o estoque ficam salvos na conta do studio. Publique uma peça para exibi-la na categoria correspondente do site.</p></aside>
     <div className="admin-title"><div><p className="admin-kicker">Tudo no seu ritmo</p><h1>Suas peças, seu controle.</h1></div><button className="admin-primary" onClick={() => setEditor(blank())} disabled={!state}>+ Nova peça</button></div>
     {error && <p className="admin-error" role="alert">{error} <button onClick={reload}>Tentar novamente</button></p>}
     <p role="status" className="admin-notice">{notice}</p>
     {!state && !error && <p>Carregando suas peças…</p>}
     {state && <>
       <div className="admin-stats"><div><strong>{products.reduce((n, p) => n + p.stock - p.reserved, 0)}</strong>Unidades livres</div><div><strong>{products.reduce((n, p) => n + p.reserved, 0)}</strong>Reservadas</div><div><strong>{products.filter(p => !p.published).length}</strong>Rascunhos</div></div>
-      <nav className="admin-tabs" aria-label="Áreas do painel">{[['pieces', 'Minhas peças'], ['history', 'Histórico'], ['showcase', live ? 'Vitrine do site' : 'Vitrine de demonstração']].map(([key, label]) => <button key={key} aria-pressed={view === key} onClick={() => { setView(key); setFilter('Todas') }}>{label}</button>)}</nav>
-      {view === 'history' ? <section aria-label="Histórico de estoque"><div className="admin-history-head"><h2>Movimentações</h2><button onClick={exportData}>{live ? 'Exportar catálogo' : 'Exportar demonstração'}</button></div>{state.events.length === 0 ? <p className="admin-empty">Suas reservas, vendas e reposições aparecerão aqui.</p> : <ol className="admin-history">{state.events.map(event => {
+      <nav className="admin-tabs" aria-label="Áreas do painel">{[['pieces', 'Minhas peças'], ['history', 'Histórico'], ['showcase', 'Vitrine do site']].map(([key, label]) => <button key={key} aria-pressed={view === key} onClick={() => { setView(key); setFilter('Todas') }}>{label}</button>)}</nav>
+      {view === 'history' ? <section aria-label="Histórico de estoque"><div className="admin-history-head"><h2>Movimentações</h2><button onClick={exportData}>Exportar catálogo</button></div>{state.events.length === 0 ? <p className="admin-empty">Suas reservas, vendas e reposições aparecerão aqui.</p> : <ol className="admin-history">{state.events.map(event => {
         const p = products.find(p => p.id === event.productId)
         const last = state.events.find(e => e.productId === event.productId)
         return <li key={event.id}><div><strong>{p?.name || 'Peça'}</strong><p>{actionLabels[event.action] || 'Estoque inicial'} · {event.quantity} unidade(s)</p><small>{new Date(event.at).toLocaleString('pt-BR')}</small></div>{last.id === event.id && !['undo', 'initial'].includes(event.action) && <button onClick={() => setMovement({ product: p, action: 'undo', event })}>Desfazer</button>}</li>
-      })}</ol>}</section> : view === 'showcase' ? <div className="admin-catalog-preview"><p className="admin-help">{live ? 'Peças publicadas, organizadas por tipo: cases, piteiras e cuias.' : 'As peças publicadas são organizadas pelo tipo: cases, piteiras e cuias. Esta prévia não altera o site público.'}</p><Gallery products={products.map(toGalleryProduct)} preview /></div> : <>
+      })}</ol>}</section> : view === 'showcase' ? <div className="admin-catalog-preview"><p className="admin-help">Peças publicadas, organizadas por tipo: piteiras, cases e cuias.</p><Gallery products={products.map(toGalleryProduct)} preview /></div> : <>
         {view === 'showcase' && <p className="admin-help">Prévia das peças marcadas para exibição. Esta lista não altera o site público.</p>}
         <div className="admin-filters"><label>Buscar peça<input type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Nome da peça" /></label><label>Mostrar<select value={filter} onChange={e => setFilter(e.target.value)}>{['Todas', 'Disponível', 'Reservado', 'Esgotado', ...(view === 'showcase' ? [] : ['Rascunho'])].map(f => <option key={f}>{f}</option>)}</select></label></div>
         <div className="admin-grid">{visible.map(p => <article className="admin-card" key={p.id}>
@@ -150,7 +149,7 @@ export default function Admin({ catalog = demoCatalog, live = false, userEmail, 
           </div></article>)}</div>{visible.length === 0 && <p className="admin-empty">Nenhuma peça por aqui. Adicione uma peça ou mude os filtros.</p>}
       </>}
     </>}
-    {editor && <Editor live={live} initial={editor} onClose={() => setEditor(null)} onSave={save} />}
+    {editor && <Editor initial={editor} onClose={() => setEditor(null)} onSave={save} />}
     {movement && <Movement {...movement} onClose={() => setMovement(null)} onSave={move} />}
   </main>
 }

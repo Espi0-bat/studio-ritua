@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { normalizeDetails, productSpecs } from '../src/services/productDetails.js'
 import { validateProduct } from '../src/services/inventory.js'
 import { toGalleryProduct } from '../src/services/catalogSections.js'
-import { createDemoCatalog } from '../src/services/demoCatalog.js'
+import { createDemoCatalog } from './demoCatalog.js'
 const blank = { name:'Teste',category:'Piteira',photos:[],priceCents:100,description:'',published:true,quantity:1 }
 test('cadastros antigos não recebem ficha técnica inventada',()=>{
  const details=normalizeDetails(blank)

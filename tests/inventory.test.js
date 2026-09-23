@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { stockChange } from '../src/services/inventory.js'
-import { createDemoCatalog } from '../src/services/demoCatalog.js'
+import { createDemoCatalog } from './demoCatalog.js'
 function setup() {
   let data
   let queue = Promise.resolve()

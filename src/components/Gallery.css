@@ -335,13 +335,6 @@
   font-size: 19px;
 }
 
-.gallery__reference {
-  font-size: 11px;
-  line-height: 1.6;
-  color: var(--cherry);
-  margin: 0 0 12px;
-}
-
 .gallery__stock {
   position: absolute;
   top: 14px;
@@ -398,13 +391,9 @@
     font-size: 9px;
   }
 }
-.gallery__reference a { text-decoration: underline; }
-.gallery__feature-caption { margin-top: 18px; font-size: 15px; line-height: 1.7; }
-
 .gallery__category + .gallery__category { margin-top: 80px; }
 .gallery__group + .gallery__group { margin-top: 56px; }
 .gallery__premium { font: 400 30px var(--font-display); color: var(--cherry); margin-bottom: 24px; }
-.gallery__open--reference img { object-fit: contain; background: white; }
 .gallery__placeholder { display: grid; place-items: center; aspect-ratio: 4 / 5; background: #e8ddc9; color: var(--cherry); }
 .gallery__card-price { margin-top: 10px; font-weight: 600; }
 .gallery__empty { padding: 24px 0; line-height: 1.6; }
