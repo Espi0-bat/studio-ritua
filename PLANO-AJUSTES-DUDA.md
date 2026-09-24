@@ -520,3 +520,15 @@ Recebidas em 23/09/2026 e publicadas. Continua valendo a decisão da seção 19.
 2. **Frete de retorno sempre por conta do cliente.** Quando a peça volta por vício, as despesas correm por conta do fornecedor (art. 18); no arrependimento do art. 49, parágrafo único, os valores pagos — inclusive frete — voltam ao consumidor. A regra vale para devolução por desistência sem defeito, não para esses dois casos.
 
 **Pendências abertas.** Identificação legal do fornecedor (nome ou razão social e CPF/CNPJ) continua faltando; a cidade agora é conhecida (Boa Vista/RR). A Duda não respondeu como fica a devolução de **peça personalizada**. Duas respostas ficaram ambíguas e foram publicadas de forma conservadora, aguardando confirmação: "por mtx" (entrega em mãos) foi lida como motoboy e não virou frase própria; "cartão apenas retirando aqui" foi lida como dinheiro e cartão restritos à retirada presencial.
+
+### 19.8. Reescrita da Duda — pagamento e envio na FAQ
+
+**Status: implementado e publicado em 23/09/2026.** Textos recebidos pela Duda no WhatsApp às 21h39 de 23/09/2026, substituindo as versões da seção 19.7. Continua valendo a decisão da seção 19.5: texto dela no ar como escreveu. Desta vez não houve nada a corrigir de português — os dois textos foram publicados na íntegra, sem alteração de uma palavra.
+
+- **"Como posso pagar?" virou "Como funciona o pagamento?"**, a pedido dela.
+- **Pagamento.** Saiu a frase "para envio por motoboy ou transportadora, o pagamento é por Pix". O texto novo só restringe dinheiro e cartão à retirada presencial e não diz mais qual meio vale para envio. Isso desfaz a leitura conservadora registrada na seção 19.7 ("cartão apenas retirando aqui").
+- **Envio.** Passou a separar Boa Vista (RR) das demais localidades. Em Boa Vista: motoboy, frete calculado após o endereço, envio em até 30 minutos e **pagamento no momento da entrega** — antes o despacho dependia do pagamento já confirmado. Para fora: informar o CEP pela DM, cotação por destino e tamanho, e o cliente escolhe a forma de envio.
+- **Informações que saíram do texto de envio** e não foram substituídas: frete do motoboy cobrado por quilômetro, sem valor mínimo e sem limite de distância; código de rastreio enviado pela DM; e "o frete é pago pelo cliente". Esta última continua no rodapé (`src/components/Footer.jsx`), em trocas e devoluções, então a informação não sumiu do site — mas quem lê só a FAQ não vê mais quem paga o frete. Não foi reintroduzida por conta própria.
+- **Ponto a confirmar com a Duda:** pagamento na entrega (Boa Vista) convive com o texto de reserva no rodapé, que exige o restante pago **antes** do envio ou da retirada. Para uma peça reservada e entregue por motoboy, os dois textos apontam para momentos diferentes. Nenhum dos dois foi alterado.
+- `src/components/FAQ.jsx` passou a aceitar resposta em vários parágrafos (`answer` como lista), preservando as quebras que ela usou. As demais perguntas seguem com texto simples.
+- 23 testes Node aprovados, build de produção e `git diff --check` aprovados.
