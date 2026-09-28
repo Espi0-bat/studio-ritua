@@ -1,13 +1,14 @@
-import photo from '../assets/images/ritua-3040.webp'
 import handprint from '../assets/images/handprint-ritua.png'
 import './About.css'
+import useSiteMedia from './useSiteMedia'
 export default function About() {
+  const photo = useSiteMedia('studio')
   return (
     <section id="sobre" className="about section">
       <div className="container about__inner">
         <figure className="about__photo">
-          <img src={photo} alt="Cuias verdes e rosa, chaveiros estampados e cases de isqueiro com cogumelos e coração, sobre uma bandeja dourada" width="844" height="1500" loading="lazy" />
-          <figcaption>formas, cores e nossas pequenas invenções.</figcaption>
+          <img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" />
+          {photo.caption && <figcaption>{photo.caption}</figcaption>}
         </figure>
         <div className="about__text">
           <p className="eyebrow">O studio</p>

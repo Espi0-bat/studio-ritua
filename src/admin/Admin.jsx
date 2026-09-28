@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { actionLabels, categories, statusOf } from '../services/inventory'
 import { preparePhotos } from './photos'
+import SiteMedia from './SiteMedia'
 import Gallery from '../components/Gallery'
 import { normalizeDetails } from '../services/productDetails'
 import { catalogSections, toGalleryProduct } from '../services/catalogSections'
@@ -176,8 +177,8 @@ export default function Admin({ catalog, userEmail, onSignOut, onChangePassword 
     {!state && !error && <p>Carregando suas peças…</p>}
     {state && <>
       <div className="admin-stats"><div><strong>{products.reduce((n, p) => n + p.stock - p.reserved, 0)}</strong>Unidades livres</div><div><strong>{products.reduce((n, p) => n + p.reserved, 0)}</strong>Reservadas</div><div><strong>{products.filter(p => !p.published).length}</strong>Rascunhos</div></div>
-      <nav className="admin-tabs" aria-label="Áreas do painel">{[['pieces', 'Minhas peças'], ['history', 'Histórico'], ['showcase', 'Vitrine do site']].map(([key, label]) => <button key={key} aria-pressed={view === key} onClick={() => { setView(key); setFilter('Todas') }}>{label}</button>)}</nav>
-      {view === 'history' ? <section aria-label="Histórico de estoque"><div className="admin-history-head"><h2>Movimentações</h2><button onClick={exportData}>Exportar catálogo</button></div>{state.events.length === 0 ? <p className="admin-empty">Suas reservas, vendas e reposições aparecerão aqui.</p> : <ol className="admin-history">{state.events.map(event => {
+      <nav className="admin-tabs" aria-label="Áreas do painel">{[['pieces', 'Minhas peças'], ['history', 'Histórico'], ['showcase', 'Vitrine do site'], ['media', 'Imagens do site']].map(([key, label]) => <button key={key} aria-pressed={view === key} onClick={() => { setView(key); setFilter('Todas') }}>{label}</button>)}</nav>
+      {view === 'media' ? <SiteMedia onNotice={setNotice} /> : view === 'history' ? <section aria-label="Histórico de estoque"><div className="admin-history-head"><h2>Movimentações</h2><button onClick={exportData}>Exportar catálogo</button></div>{state.events.length === 0 ? <p className="admin-empty">Suas reservas, vendas e reposições aparecerão aqui.</p> : <ol className="admin-history">{state.events.map(event => {
         const p = products.find(p => p.id === event.productId)
         const last = state.events.find(e => e.productId === event.productId)
         return <li key={event.id}><div><strong>{p?.name || 'Peça'}</strong><p>{actionLabels[event.action] || 'Estoque inicial'} · {event.quantity} unidade(s)</p><small>{new Date(event.at).toLocaleString('pt-BR')}</small></div>{last.id === event.id && !['undo', 'initial'].includes(event.action) && <button onClick={() => setMovement({ product: p, action: 'undo', event })}>Desfazer</button>}</li>

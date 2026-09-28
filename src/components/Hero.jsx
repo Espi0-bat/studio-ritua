@@ -1,7 +1,8 @@
-import photo from '../assets/images/ritua-9895.webp'
 import './Hero.css'
 import { instagramDirectUrl } from '../config'
+import useSiteMedia from './useSiteMedia'
 export default function Hero() {
+  const photo = useSiteMedia('abertura')
   return (
     <section id="inicio" className="hero">
       <div className="container hero__inner">
@@ -18,8 +19,8 @@ export default function Hero() {
           </div>
         </div>
         <figure className="hero__photo">
-          <img src={photo} alt="Cases de isqueiro coloridos com detalhes em relevo da Rituá — peças indisponíveis" width="1125" height="1500" fetchPriority="high" />
-          <figcaption>cases Rituá · coleção indisponível</figcaption>
+          <img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} fetchPriority="high" />
+          {photo.caption && <figcaption>{photo.caption}</figcaption>}
         </figure>
       </div>
     </section>
