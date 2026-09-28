@@ -12,7 +12,7 @@ const returnsPolicy = [
   {
     title: 'Cases de isqueiro',
     paragraphs: [
-      'Os cases de isqueiro têm garantia de 7 dias após o recebimento. Em caso de defeito de fabricação dentro desse período, entre em contato conosco pela DM do Instagram para que possamos avaliar e solucionar o caso.',
+      'Os cases de isqueiro têm garantia de 15 dias após o recebimento. Em caso de defeito de fabricação dentro desse período, entre em contato conosco pela DM do Instagram para que possamos avaliar e solucionar o caso.',
     ],
   },
   {

@@ -22,7 +22,7 @@ export default function About() {
           <p>Cada cuia nasce uma por vez, com combinações de cores, formas e detalhes que fazem dela uma peça única.</p>
           <p>O material é levemente maleável, não gruda e ajuda a aproveitar melhor a sua crema, evitando desperdícios.</p>
           <p>Você também pode personalizar a sua com seu nome e escolher as cores que mais combinam com você e seu kit.</p>
-          <a href="#galeria" className="text-link">Veja os detalhes nas fotos <span aria-hidden="true">↗</span></a>
+          <a href="#cuias" className="text-link">Veja os detalhes nas fotos <span aria-hidden="true">↗</span></a>
         </div>
       </div>
     </section>

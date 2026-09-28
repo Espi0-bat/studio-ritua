@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { instagramDirectUrl } from '../config'
 import { staticProducts } from '../data/catalog'
-import { groupCatalog } from '../services/catalogSections'
+import { groupCatalog, priceLabel, soldByDirect } from '../services/catalogSections'
 import './Gallery.css'
 import ProductCarousel from './ProductCarousel'
-
-const formatPrice = cents => (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
 function ProductMedia({ product, detail = false, reducedMotion }) {
   const { media, alt } = product
@@ -52,7 +50,7 @@ export default function Gallery({ products = staticProducts, preview = false }) 
     <section id="galeria" className="gallery section">
       <div className="container">
         {sections.map(section => (
-          <section className={`gallery__category gallery__category--${section.category.toLowerCase()}`} key={section.category} aria-label={section.title}>
+          <section className={`gallery__category gallery__category--${section.category.toLowerCase()}`} key={section.category} id={preview ? undefined : section.anchor} aria-label={section.title}>
             <div className="gallery__heading">
               <div>{section.eyebrow && <p className="eyebrow">{section.eyebrow}</p>}<h2>{section.title}</h2></div>
               <p>{section.description}</p>
@@ -66,13 +64,15 @@ export default function Gallery({ products = staticProducts, preview = false }) 
                       onClick={event => {
                         trigger.current = event.currentTarget.closest('.gallery__track').querySelector(`[data-carousel-copy="1"][data-carousel-index="${index}"] button`)
                         setSelected(item.id)
-                      }} aria-label={`Ampliar foto: ${item.gridLabel}`} aria-haspopup="dialog">
+                      }} aria-label={`Mais informações sobre ${item.gridLabel}`} aria-haspopup="dialog">
                       <ProductMedia product={item} reducedMotion={reducedMotion} />
                       {(item.status || item.available === false) && <span className="gallery__stock">{item.status || 'Indisponível'}</span>}
-                      <span className="gallery__zoom" aria-hidden="true">Ampliar foto ↗</span>
+                      <span className="gallery__zoom" aria-hidden="true">Clique aqui para mais informações ↗</span>
                     </button>
                     <figcaption><span className="gallery__number">{String(index + 1).padStart(2, '0')}</span><h3>{item.gridLabel}</h3></figcaption>
-                    {Number.isInteger(item.priceCents) && <p className="gallery__card-price">{formatPrice(item.priceCents)}</p>}
+                    {priceLabel(item)
+                      ? <p className="gallery__card-price">{priceLabel(item)}</p>
+                      : soldByDirect(item) && <p className="gallery__card-price gallery__card-price--consult">Valores pelo direct</p>}
                   </>
                 )} /> : <p className="gallery__empty">{preview ? 'Nenhuma peça publicada nesta categoria. Selecione este tipo no cadastro para adicioná-la aqui.' : 'Novas peças serão apresentadas por aqui.'}</p>}
               </div>
@@ -100,7 +100,9 @@ export default function Gallery({ products = staticProducts, preview = false }) 
                 </div>
               ))}
             </dl>}
-            {Number.isInteger(product.priceCents) && <p className="gallery__price">{formatPrice(product.priceCents)}</p>}
+            {priceLabel(product)
+              ? <p className="gallery__price">{priceLabel(product)}</p>
+              : soldByDirect(product) && <p className="gallery__price gallery__price--consult">Valores e encomendas pelo direct.</p>}
             <a className="btn" href={instagramDirectUrl} target="_blank" rel="noopener noreferrer">Falar pelo direct <span aria-hidden="true">↗</span></a>
           </div>
         </div>}

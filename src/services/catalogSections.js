@@ -5,10 +5,16 @@ export const piteiraLineSections = [
   { key: 'Classica', title: 'Piteiras Clássicas' },
 ]
 export const catalogSections = [
-  { category: 'Piteira', title: 'Piteiras de vidro', description: 'Mais conforto na sessão, fluxo mais limpo e sabor preservado do início ao fim.', lines: piteiraLineSections },
-  { category: 'Case', title: 'Cases de isqueiro', description: 'Cases de isqueiro com pequenos detalhes em relevo.' },
-  { category: 'Cuia', title: 'Nossas cuias.', eyebrow: 'Também fazem parte do ritual', description: 'Uma cuia feita para ser só sua — e deixar a sua sessão ainda mais especial.' },
+  { category: 'Piteira', anchor: 'piteiras', title: 'Piteiras de vidro', description: 'Mais conforto na sessão, fluxo mais limpo e sabor preservado do início ao fim.', lines: piteiraLineSections },
+  { category: 'Case', anchor: 'cases', title: 'Cases de isqueiro', description: 'Cases de isqueiro com pequenos detalhes em relevo.' },
+  { category: 'Cuia', anchor: 'cuias', title: 'Nossas cuias.', eyebrow: 'Também fazem parte do ritual', description: 'Uma cuia feita para ser só sua — e deixar a sua sessão ainda mais especial.' },
 ]
+const formatPrice = cents => (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+// As cuias são combinadas só pelo direct: a vitrine apresenta a peça sem valor.
+export const soldByDirect = product => product.category === 'Cuia'
+// Peça sem valor definido não vira "R$ 0,00" no site.
+export const priceLabel = product =>
+  (!soldByDirect(product) && Number.isInteger(product.priceCents) && product.priceCents > 0 ? formatPrice(product.priceCents) : null)
 export function groupCatalog(products) {
   return catalogSections.map(section => {
     const items = products.filter(p => p.published === true && p.category === section.category)

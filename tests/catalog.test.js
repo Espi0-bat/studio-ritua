@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { groupCatalog, toGalleryProduct, selectShowcase } from '../src/services/catalogSections.js'
+import { groupCatalog, toGalleryProduct, selectShowcase, priceLabel, soldByDirect } from '../src/services/catalogSections.js'
 test('categorias têm ordem fixa e cada produto publicado vai apenas para seu tipo', () => {
   const products = ['Cuia', 'Case', 'Piteira'].map((category, id) => ({ id, category, published: true }))
   products.push({ id: 3, category: 'Case', published: false })
@@ -54,4 +54,19 @@ test('vender um produto não recupera vitrine enquanto outro tiver estoque', () 
   const remaining = { ...piece, id: 'outra' }
   assert.equal(caseSlot([{ ...piece, stock: 0 }, remaining]), 'outra')
   assert.equal(selectShowcase([], [...showcases, ...showcases]).length, 3)
+})
+
+test('cuia não exibe preço e peça sem valor não vira "R$ 0,00"', () => {
+  assert.equal(priceLabel({ category: 'Cuia', priceCents: 8500 }), null)
+  assert.equal(priceLabel({ category: 'Piteira', priceCents: 0 }), null)
+  assert.equal(priceLabel({ category: 'Case' }), null)
+  assert.ok(priceLabel({ category: 'Piteira', priceCents: 11500 }).includes('115,00'))
+  assert.equal(soldByDirect({ category: 'Cuia' }), true)
+  assert.equal(soldByDirect({ category: 'Case' }), false)
+})
+
+test('cada seção da vitrine tem sua própria âncora', () => {
+  const anchors = groupCatalog([]).map(section => section.anchor)
+  assert.deepEqual(anchors, ['piteiras', 'cases', 'cuias'])
+  assert.equal(new Set(anchors).size, anchors.length)
 })

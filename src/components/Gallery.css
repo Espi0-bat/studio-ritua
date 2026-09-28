@@ -82,12 +82,35 @@
   position: absolute;
   bottom: 12px;
   right: 12px;
+  left: 12px;
   background: var(--cream);
   color: var(--ink);
   border: 1px solid var(--cherry);
   border-radius: 24px;
   padding: 8px 12px;
   font-size: 11px;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Brilho pedido pela Duda: um reflexo atravessa o convite de tempos em tempos. */
+.gallery__zoom::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.92) 50%, transparent 62%);
+  transform: translateX(-130%);
+  animation: gallery-shine 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes gallery-shine {
+  0%, 62% { transform: translateX(-130%); }
+  100% { transform: translateX(130%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery__zoom::after { display: none; }
 }
 
 .gallery__item figcaption {
@@ -223,6 +246,7 @@
     font-size: 10px;
     bottom: 8px;
     right: 8px;
+    left: 8px;
     padding: 6px 8px;
   }
 
@@ -396,6 +420,7 @@
 .gallery__premium { font: 400 30px var(--font-display); color: var(--cherry); margin-bottom: 24px; }
 .gallery__placeholder { display: grid; place-items: center; aspect-ratio: 4 / 5; background: #e8ddc9; color: var(--cherry); }
 .gallery__card-price { margin-top: 10px; font-weight: 600; }
+.gallery__card-price--consult { font-weight: 500; font-size: 14px; }
 .gallery__empty { padding: 24px 0; line-height: 1.6; }
 @media (min-width: 601px) {
   .gallery__carousel--pair .gallery__track > .gallery__item { flex-basis: calc((100% - 26px) / 2); }
