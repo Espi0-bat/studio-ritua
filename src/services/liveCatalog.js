@@ -80,4 +80,10 @@ export const liveCatalog = {
     const { error } = await supabase.rpc('ritua_move_stock', { product_id: id, operation_id: operationId, action: 'undo', quantity, undo_event_id: eventId }); fail(error)
     return load()
   },
+  async remove(id, revision, photoPaths = []) {
+    const { error } = await supabase.rpc('ritua_delete_product', { product_id: id, expected_revision: revision ?? null }); fail(error)
+    // Os arquivos só saem do storage depois que a peça deixa de reivindicá-los.
+    if (photoPaths.length) await supabase.storage.from(bucket).remove(photoPaths)
+    return load()
+  },
 }

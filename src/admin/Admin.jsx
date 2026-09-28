@@ -101,6 +101,24 @@ function Movement({ product, action, event, onClose, onSave }) {
     {error && <p role="alert" className="admin-error">{error}</p>}<button disabled={busy} className="admin-primary">{busy ? 'Salvando…' : 'Confirmar'}</button>
   </form></Modal>
 }
+function Removal({ product, events, onClose, onDelete }) {
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const guard = useRef(false)
+  const history = events === 0 ? '' : events === 1 ? ', a movimentação do histórico' : `, as ${events} movimentações do histórico`
+  async function submit(e) {
+    e.preventDefault(); if (guard.current) return
+    guard.current = true; setBusy(true); setError('')
+    try { await onDelete(product); onClose() }
+    catch (e) { setError(e.message) } finally { guard.current = false; setBusy(false) }
+  }
+  return <Modal title="Excluir peça" onClose={onClose} busy={busy}><form onSubmit={submit}>
+    <p><strong>{product.name}</strong></p>
+    <p>A peça sai do painel e do site agora. O cadastro, as fotos{history} somem de vez e não há como recuperar depois.</p>
+    {error && <p role="alert" className="admin-error">{error}</p>}
+    <div className="admin-actions"><button type="button" disabled={busy} onClick={onClose}>Cancelar</button><button disabled={busy} className="admin-danger">{busy ? 'Excluindo…' : 'Excluir de vez'}</button></div>
+  </form></Modal>
+}
 function PasswordChange({ onClose, onSave }) {
   const [password, setPassword] = useState('')
   const [repeat, setRepeat] = useState('')
@@ -130,12 +148,17 @@ export default function Admin({ catalog, userEmail, onSignOut, onChangePassword 
   const [search, setSearch] = useState('')
   const [editor, setEditor] = useState(null)
   const [movement, setMovement] = useState(null)
+  const [removing, setRemoving] = useState(null)
   const [changingPassword, setChangingPassword] = useState(false)
   async function reload() { try { setState(await catalog.load()); setError('') } catch (e) { setError(e.message) } }
   useEffect(() => { reload(); const handler = () => reload(); window.addEventListener('focus', handler); const timer = setInterval(handler, 60000); return () => { window.removeEventListener('focus', handler); clearInterval(timer) } }, [])
   async function save(input, revision, operationId) { try { setState(await catalog.save(input, revision, operationId)); setNotice('Peça salva. As alterações publicadas já podem aparecer no site.') } catch (e) { await reload(); throw e } }
   async function move(p, action, quantity, operationId, event) {
     try { setState(action === 'undo' ? await catalog.undo(p.id, p.revision, event.id, operationId, event.quantity) : await catalog.move(p.id, p.revision, action, quantity, operationId)); setNotice('Estoque atualizado.') }
+    catch (e) { await reload(); throw e }
+  }
+  async function destroy(p) {
+    try { setState(await catalog.remove(p.id, p.revision, Object.values(p.photoMap || {}))); setNotice('Peça excluída.') }
     catch (e) { await reload(); throw e }
   }
   function exportData() {
@@ -165,13 +188,14 @@ export default function Admin({ catalog, userEmail, onSignOut, onChangePassword 
           {p.photos[0] ? <img className="admin-cover" src={p.photos[0]} alt={p.name} /> : <div className="admin-cover admin-placeholder" aria-label="Peça sem foto"><span>✦</span>Adicione uma foto</div>}
           <div className="admin-card-body"><div className="admin-card-meta"><span>{p.category}</span><span className="admin-badge">{statusOf(p)}</span></div><h2>{p.name}</h2><p>{money(p.priceCents)}</p>
             {view === 'showcase' ? <p className="admin-description">{p.description}</p> : <><p className="admin-help">{p.stock - p.reserved} livres · {p.reserved} reservadas</p>
-              <div className="admin-actions"><button onClick={() => setEditor(p)}>Editar</button><button onClick={() => setEditor({ ...p, id: undefined, revision: undefined, name: `${p.name.slice(0, 90)} (cópia)`, quantity: 1, published: false })}>Duplicar</button></div>
+              <div className="admin-actions"><button onClick={() => setEditor(p)}>Editar</button><button onClick={() => setEditor({ ...p, id: undefined, revision: undefined, name: `${p.name.slice(0, 90)} (cópia)`, quantity: 1, published: false })}>Duplicar</button><button className="admin-remove" onClick={() => setRemoving(p)}>Excluir</button></div>
               <details><summary>Movimentar estoque</summary><div className="admin-actions">{[['reserve', 'Reservar', p.stock > p.reserved], ['sell', 'Registrar venda', p.stock > p.reserved], ['sellReserved', 'Vender reserva', p.reserved > 0], ['release', 'Cancelar reserva', p.reserved > 0], ['restock', 'Adicionar unidades', p.stock < 9999], ['remove', 'Retirar unidades', p.stock > p.reserved]].map(([action, label, enabled]) => <button key={action} disabled={!enabled} onClick={() => setMovement({ product: p, action })}>{label}</button>)}</div></details></>}
           </div></article>)}</div>{visible.length === 0 && <p className="admin-empty">Nenhuma peça por aqui. Adicione uma peça ou mude os filtros.</p>}
       </>}
     </>}
     {editor && <Editor initial={editor} onClose={() => setEditor(null)} onSave={save} />}
     {movement && <Movement {...movement} onClose={() => setMovement(null)} onSave={move} />}
+    {removing && state && <Removal product={removing} events={state.events.filter(e => e.productId === removing.id).length} onClose={() => setRemoving(null)} onDelete={destroy} />}
     {changingPassword && <PasswordChange onClose={() => setChangingPassword(false)} onSave={async password => { await onChangePassword(password); setNotice('Senha atualizada. Use a nova senha no próximo acesso.') }} />}
   </main>
 }
