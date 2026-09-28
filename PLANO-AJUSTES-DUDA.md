@@ -573,3 +573,23 @@ Recebidas em 23/09/2026 e publicadas. Continua valendo a decisão da seção 19.
 - Na primeira vez, cada espaço da aba "Imagens do site" precisa receber uma foto dela; depois disso, dá para mudar só a legenda. Enquanto ela não enviar, o site segue com a foto que veio no projeto.
 - A cuia cadastrada com preço 0 pode continuar assim: o valor não aparece mais no site de nenhum jeito.
 - Excluir é definitivo. Se a intenção for só tirar do site, o caminho continua sendo desmarcar "Publicar no site" no cadastro, que mantém a peça e o histórico no painel.
+
+## 21. Identificação da loja e pendências legais
+
+### 21.1. O que foi publicado
+
+O rodapé ganhou **"Informações da loja"** (`#loja`), antes de reserva, devoluções e privacidade, com o que já está confirmado: studio artesanal de Boa Vista (RR), peças feitas à mão uma a uma, atendimento pelo direct e pelo e-mail `studioritua@gmail.com`, e o aviso de que o site apresenta as peças mas não recebe pagamento nem fecha pedido. A cidade vem das respostas da seção 19.7; o restante já estava no site, em outras seções.
+
+### 21.2. O que continua faltando
+
+**Identificação do fornecedor.** O usuário informou em 28/09/2026 que **não há CNPJ**. Continua sem o nome de quem responde pela loja e sem CPF.
+
+- O art. 31 do CDC exige que a oferta traga informações corretas sobre o produto e o fornecedor. O Decreto 7.962/2013, art. 2º, I, é mais específico: nome empresarial e CNPJ ou CPF em local de destaque — mas ele rege a **contratação** no comércio eletrônico, e aqui o site não fecha contrato: não tem carrinho, não recebe pagamento e manda a conversa para a DM. Isso reduz o alcance do decreto, não o do art. 31.
+- **Recomendação:** não publicar CPF enquanto a venda não for fechada no site. CPF exposto em página pública é material de fraude e não é exigido para uma vitrine que remete ao direct. O caminho mais seguro é publicar o nome de quem responde pela loja — decisão da Duda — e deixar o documento fora do ar.
+- Se um dia o site passar a receber pedido ou pagamento, a identificação completa (nome e CNPJ ou CPF, em destaque) passa a ser obrigatória antes de ligar essa parte.
+
+**Devolução de peça personalizada.** A Duda ainda não respondeu. Peça feita sob medida com nome ou cores escolhidas é o caso em que o direito de arrependimento do art. 49 mais gera discussão; sem o texto dela, o site não diz nada a respeito.
+
+**Pagamento na entrega x reserva.** A FAQ diz que em Boa Vista o pagamento é no momento da entrega; o rodapé diz que o restante da reserva é pago antes do envio ou da retirada. Para uma peça reservada e entregue por motoboy, os dois textos apontam para momentos diferentes. Nenhum dos dois foi alterado por conta própria.
+
+Esta análise é técnica e não substitui parecer jurídico. As três pendências foram enviadas à Duda em 28/09/2026 junto com o aviso das mudanças do painel.

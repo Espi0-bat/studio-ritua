@@ -80,6 +80,11 @@ export default function Footer() {
 
       </div>
       <div className="container footer__legal">
+        <details id="loja">
+          <summary>Informações da loja</summary>
+          <p>A Studio Rituá é um studio artesanal de Boa Vista (RR). As peças são feitas à mão, uma a uma, e cada uma sai diferente da outra.</p>
+          <p>O atendimento e os pedidos acontecem pelo direct do Instagram <a href={instagramUrl} target="_blank" rel="noopener noreferrer">@studioritua</a> ou por <a href="mailto:studioritua@gmail.com">studioritua@gmail.com</a>. Este site apresenta as peças: não recebe pagamento nem fecha pedido por aqui.</p>
+        </details>
         <details id="reserva">
           <summary>Reserva de peças</summary>
           {reservationPolicy.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
