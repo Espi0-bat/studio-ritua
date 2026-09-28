@@ -532,3 +532,44 @@ Recebidas em 23/09/2026 e publicadas. Continua valendo a decisão da seção 19.
 - **Ponto a confirmar com a Duda:** pagamento na entrega (Boa Vista) convive com o texto de reserva no rodapé, que exige o restante pago **antes** do envio ou da retirada. Para uma peça reservada e entregue por motoboy, os dois textos apontam para momentos diferentes. Nenhum dos dois foi alterado.
 - `src/components/FAQ.jsx` passou a aceitar resposta em vários parágrafos (`answer` como lista), preservando as quebras que ela usou. As demais perguntas seguem com texto simples.
 - 23 testes Node aprovados, build de produção e `git diff --check` aprovados.
+
+## 20. Prints da Duda de 28/09/2026 — garantia, preço das cuias, botão da foto, exclusão e imagens do site
+
+### 20.1. Pedidos identificados nos prints
+
+1. **Garantia dos cases** — "mudas o da case de isqueiro pra 15 dias de garantia".
+2. **Preço das cuias** — print do card "Cuia Artesanal · R$ 0,00" com o valor circulado: "n precisa pq n vou vender cuia por ai, so na dm; ai essa parte é só p pessoa conhecer as cuias, ver uns kits montados".
+3. **Botão "Ampliar foto"** — "mudar p sla 'clique aqui para mais informações' p pessoa ver o tamanho e pa. Se tiver como colocar um brilho agradeço".
+4. **Link do bloco "Feitas à mão"** — "clicando aqui ta indo p piteiras de vidro / era p ir p essa galeria das cuias".
+5. **Excluir peça no painel** — print do card com Editar/Duplicar e as ações de estoque: "opcao de excluir".
+6. **As duas fotos fixas do site** — "queria saber se essas duas fotos e legenda teria como deixar mim editar? ou toda vez eu teria q pedir p vc? é q a intenção era colocar outras fotos futuramente".
+
+### 20.2. Decisões do usuário antes da implementação
+
+- **Exclusão definitiva**, não arquivamento: a peça, as fotos e o histórico de estoque dela saem do banco sem volta, com confirmação obrigatória na tela.
+- **Nas cuias sai só o preço**, com aviso de direct. As etiquetas Disponível/Esgotado continuam, e o estoque de cuia segue controlado pelo painel.
+
+### 20.3. Implementado
+
+- **Garantia dos cases: 7 → 15 dias** (`src/components/Footer.jsx`). Continua valendo a decisão da seção 19.5 — texto dela no ar como escreveu. A ressalva do CDC também continua: a garantia contratual é complementar à legal (art. 50) e prazo menor que os 90 dias do art. 26, II não vincula o consumidor. 15 dias é melhor que 7 e segue abaixo do prazo legal.
+- **Preço das cuias.** A regra saiu do componente e virou serviço em `src/services/catalogSections.js` (`priceLabel`, `soldByDirect`), sob teste. Cuia não exibe valor: o card mostra "Valores pelo direct" e o detalhe, "Valores e encomendas pelo direct." De quebra, peça de qualquer tipo com preço zerado deixou de imprimir "R$ 0,00" — o cadastro da cuia estava com preço 0 e o site publicava o valor.
+- **Botão da foto** (`src/components/Gallery.jsx`, `Gallery.css`). "Ampliar foto ↗" virou "Clique aqui para mais informações ↗", no texto dela. A pílula passou a ocupar a largura do card para o texto caber numa linha no celular, e ganhou o brilho pedido: um reflexo atravessa o botão a cada 4,5 s, desligado para quem pede menos animação (`prefers-reduced-motion`). O rótulo de acessibilidade acompanhou: "Mais informações sobre <peça>".
+- **Âncora das cuias.** Cada seção da vitrine ganhou âncora própria (`piteiras`, `cases`, `cuias`) em `src/services/catalogSections.js`, e o link "Veja os detalhes nas fotos" do bloco "Feitas à mão" aponta para `#cuias`. Na prévia do painel a âncora não entra, senão a página do painel ficaria com id repetido. O deslocamento do menu fixo já era tratado pela regra `[id] { scroll-margin-top }` do `src/index.css`.
+- **Excluir peça** (`supabase/migrations/202609280005_delete_product.sql`, `src/services/liveCatalog.js`, `src/admin/Admin.jsx`). A função `ritua_delete_product` confere o administrador, trava a peça, compara a revisão e apaga fotos, histórico, requisições de gravação e a peça na mesma transação; repetir o pedido depois de excluída não é erro. As fotos no storage saem em seguida, pelo painel, quando já não pertencem a nenhuma peça. Na tela, "Excluir" abre uma confirmação que diz quantas movimentações do histórico somem junto.
+- **Imagens do site editáveis** (`supabase/migrations/202609280006_site_media.sql`, `src/data/siteMedia.js`, `src/services/siteMedia.js`, `src/components/useSiteMedia.js`, `src/admin/SiteMedia.jsx`). Nova aba "Imagens do site" com os dois espaços — abertura e studio —, cada um com foto, legenda e descrição da foto. As fotos ficam num bucket público (`ritua-site`), porque são imagens de vitrine e o site precisa abri-las sem sessão; as fotos das peças seguem no bucket privado com URL assinada. O site carrega a foto do painel só depois de ela estar pronta, mantendo a foto do build enquanto isso: se o Supabase estiver fora, a abertura não fica vazia. A largura e a altura da foto são gravadas junto para a página não pular ao trocar a imagem.
+- 25 testes Node aprovados (dois novos, para a regra de preço e para as âncoras), build de produção aprovado.
+
+### 20.4. Publicação
+
+- Commits `c7c9b2d` (vitrine e textos), `07b4ccd` (exclusão) e `a1c829f` (imagens do site) na branch `feat/painel-ritua`, publicados na `gh-pages` pelo commit `a52f6d3`. O diff da publicação mudou apenas os bundles e o `index.html`; `CNAME` e `.nojekyll` foram preservados.
+- As duas migrations foram aplicadas no projeto `zyytoorozczdlqgcqwpe` em 28/09/2026, com `supabase db query --linked`, na ordem `202609280005_delete_product.sql` e `202609280006_site_media.sql`. Conferido depois: as funções existem como `SECURITY DEFINER`, o bucket `ritua-site` está público e o `ritua-products` continua privado, e as políticas novas do storage convivem com as antigas.
+- Teste de permissão com a chave publicável: um visitante anônimo lê `ritua_site_media` (vazia), recebe `401` ao tentar gravar e `42501` ao chamar `ritua_delete_product`.
+- `supabase db advisors --type security` não trouxe categoria nova: as duas funções novas entram no mesmo aviso intencional das anteriores, cada uma validando `ritua_is_admin()` na entrada. "Leaked Password Protection Disabled" continua aberto, como na seção 19.
+- **Pendente:** conferência visual no site no ar, em celular e desktop — o botão com o texto novo, o brilho, o link das cuias e a aba nova do painel. A primeira gravação de uma imagem do site só pode ser testada de verdade pela Duda, com a conta dela.
+
+### 20.5. Pontos a avisar ou confirmar com a Duda
+
+- O botão promete mais informações, mas as medidas só aparecem no detalhe se ela preencher comprimento, diâmetro e modelo no cadastro da piteira. Sem isso, a janela mostra só a descrição.
+- Na primeira vez, cada espaço da aba "Imagens do site" precisa receber uma foto dela; depois disso, dá para mudar só a legenda. Enquanto ela não enviar, o site segue com a foto que veio no projeto.
+- A cuia cadastrada com preço 0 pode continuar assim: o valor não aparece mais no site de nenhum jeito.
+- Excluir é definitivo. Se a intenção for só tirar do site, o caminho continua sendo desmarcar "Publicar no site" no cadastro, que mantém a peça e o histórico no painel.

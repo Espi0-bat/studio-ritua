@@ -20,7 +20,7 @@ Limites em `[auth.rate_limit]`: `email_sent = 4` por hora (segura a redefiniçã
 
 **Limitação confirmada, não resolvida:** `sign_in_sign_ups` não protege o login por senha na plataforma gerenciada. Foram feitas 43 tentativas seguidas de senha errada, do mesmo IP, contra `/auth/v1/token?grant_type=password`, e nenhuma recebeu `429`. Ou seja, não há freio efetivo de força bruta no endpoint de login. As defesas reais disponíveis são CAPTCHA (`captcha_enabled`/`captcha_provider`/`captcha_secret`, com hCaptcha ou Turnstile, exigindo widget no frontend e o segredo via `env(...)`, nunca no Git) e MFA TOTP, já habilitada na configuração mas ainda sem tela de ativação no painel. Enquanto nenhuma das duas existir, a força da senha é a única barreira.
 
-`supabase db advisors --type security` aponta três `SECURITY DEFINER` chamáveis por `authenticated`: `ritua_is_admin`, `ritua_move_stock` e `ritua_save_product`. É intencional — elas precisam de `SECURITY DEFINER` para escrever, e cada uma valida `ritua_is_admin()` na entrada (`raise exception 'Acesso não autorizado'`), com as políticas de RLS repetindo a checagem. O quarto aviso, "Leaked Password Protection Disabled", continua aberto: ligar em Authentication > Providers > Email no dashboard e conferir depois, com um `config push` seguido de novo `advisors`, se a opção sobrevive ao push.
+`supabase db advisors --type security` aponta cinco `SECURITY DEFINER` chamáveis por `authenticated`: `ritua_is_admin`, `ritua_move_stock`, `ritua_save_product`, `ritua_delete_product` e `ritua_save_site_media` (as duas últimas desde 28/09/2026). É intencional — elas precisam de `SECURITY DEFINER` para escrever, e cada uma valida `ritua_is_admin()` na entrada (`raise exception 'Acesso não autorizado'`), com as políticas de RLS repetindo a checagem. O quarto aviso, "Leaked Password Protection Disabled", continua aberto: ligar em Authentication > Providers > Email no dashboard e conferir depois, com um `config push` seguido de novo `advisors`, se a opção sobrevive ao push.
 
 Os retornos de autenticação do GitHub Pages (`espi0-bat.github.io`) foram removidos da lista; sobraram o domínio próprio e os endereços locais de desenvolvimento.
 
@@ -32,6 +32,8 @@ Os retornos de autenticação do GitHub Pages (`espi0-bat.github.io`) foram remo
 - `ritua_product_photos`: ordem e caminhos das fotos; bucket privado `ritua-products`.
 - `ritua_save_product`: salva cadastro, referências das fotos e saldo inicial na mesma transação; rejeita edição com revisão antiga.
 - `ritua_move_stock`: trava o produto e grava baixa/reserva/reposição e histórico na mesma transação. Repetições com o mesmo UUID não duplicam a operação.
+- `ritua_delete_product`: exclusão definitiva. Confere o administrador, trava a peça, compara a revisão e apaga fotos, histórico, requisições de gravação e o cadastro na mesma transação. Repetir o pedido depois da exclusão não é erro. Os arquivos saem do storage pelo painel, depois da transação, quando já não pertencem a nenhuma peça. Não há restauração: para tirar do site sem perder a peça, desmarcar "Publicar no site".
+- `ritua_site_media`: as duas imagens fixas do site (`abertura` e `studio`), com legenda, descrição da foto e as medidas da imagem; bucket **público** `ritua-site`. São fotos de vitrine, sem rascunho: o site precisa abri-las sem sessão, por isso o bucket é público e não usa URL assinada. Leitura liberada para `anon`; a escrita passa por `ritua_save_site_media`, que confere o administrador e recusa caminho que não esteja no prefixo do espaço ou que não tenha chegado ao storage. A foto substituída só pode ser apagada depois que a tabela deixa de apontar para ela.
 
 As tabelas não permitem escrita direta pelo navegador. Todas as operações reais validam o administrador no backend. Fotos de rascunhos são privadas; fotos publicadas recebem URLs assinadas de 15 minutos, renovadas nas consultas do catálogo. Uma URL emitida antes de ocultar uma peça pode continuar válida até expirar.
 
@@ -43,7 +45,7 @@ As peças publicadas no banco aparecem automaticamente em cases, piteiras ou cui
 
 ## Migrações e configuração
 
-As migrações `202609230001_catalog.sql`, `202609230002_live_catalog.sql` e `202609230003_product_details.sql` foram aplicadas via `supabase db query --linked --project-ref ... --file ...`. Não reaplicar esses arquivos em banco existente: a execução direta não registra automaticamente o histórico do comando `db push`. Novas mudanças devem ter novas migrações; antes de adotar `db push`, registrar as versões já aplicadas com o mecanismo de reparação do CLI.
+As migrações `202609230001_catalog.sql`, `202609230002_live_catalog.sql`, `202609230003_product_details.sql`, `202609280005_delete_product.sql` e `202609280006_site_media.sql` foram aplicadas via `supabase db query --linked --project-ref ... --file ...` — as duas últimas em 28/09/2026, conferidas depois com `db advisors` e com chamadas anônimas de leitura e escrita. Não reaplicar esses arquivos em banco existente: a execução direta não registra automaticamente o histórico do comando `db push`. Novas mudanças devem ter novas migrações; antes de adotar `db push`, registrar as versões já aplicadas com o mecanismo de reparação do CLI.
 
 `supabase/config.toml` mantém o endereço do site e os retornos locais/autenticados. `supabase config push` foi usado para configurar os retornos e a expiração do link, preservando MFA e o intervalo de envio. O plano gratuito com remetente padrão rejeitou a personalização do template; usamos os templates padrão, sem exigir upgrade. O serviço padrão tem limites de envio e elegibilidade de destinatários; a entrega real na caixa de entrada precisa ser conferida pelos usuários autorizados. Nenhum teste automatizado deve enviar e-mail sem autorização explícita.
 
@@ -51,7 +53,7 @@ Cuidado com os dois `enable_signup`, verificado na prática em 23/09/2026: o de 
 
 ## Verificação
 
-`npm test` verifica estoque e classificação. O build é `npm run build -- --base=/studio-ritua/`, com `.env.local` configurado. Testes SQL locais usam PGlite com Auth/Storage simulados; testes reais devem cobrir usuário administrador, visitante, rascunhos/fotos, publicação, concorrência, repetição, reversão e saída. Nunca deixar peças de teste publicadas depois da verificação.
+`npm test` verifica estoque, classificação e a regra de preço da vitrine. O build é `npm run build`, sem `--base`, com `.env.local` configurado — o site é servido na raiz do domínio próprio desde a mudança registrada na seção 19.6 do `PLANO-AJUSTES-DUDA.md`. Testes SQL locais usam PGlite com Auth/Storage simulados; testes reais devem cobrir usuário administrador, visitante, rascunhos/fotos, publicação, concorrência, repetição, reversão e saída. Nunca deixar peças de teste publicadas depois da verificação.
 
 Referências: https://supabase.com/docs/guides/database/functions, https://supabase.com/docs/guides/database/postgres/row-level-security, https://supabase.com/docs/guides/storage/security/access-control, https://supabase.com/docs/guides/auth/auth-email-passwordless.
 
