@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Gallery from './Gallery'
 import { staticProducts } from '../data/catalog'
 import { liveCatalog } from '../services/liveCatalog'
+import { startCatalogRefresh } from '../services/catalogRefresh'
 import { supabase } from '../services/supabase'
 import { toGalleryProduct, selectShowcase } from '../services/catalogSections'
 export default function LiveGallery() {
@@ -19,10 +20,9 @@ export default function LiveGallery() {
       catch { if (active) setError(true) }
       finally { loading = false }
     }
-    refresh()
-    const timer = setInterval(refresh, 60000)
-    window.addEventListener('focus', refresh)
-    return () => { active = false; clearInterval(timer); window.removeEventListener('focus', refresh) }
+    // O ciclo de um minuto só roda com a aba à vista, e o retorno atualiza na hora.
+    const stop = startCatalogRefresh(refresh)
+    return () => { active = false; stop() }
   }, [])
   return <>{loaded ? <Gallery products={selectShowcase(products, staticProducts)} /> : <section id="galeria" className="gallery section"><p className="container" role="status">{error ? "Catálogo temporariamente indisponível. Tente novamente em instantes." : "Carregando as peças…"}</p></section>}{error && <p className="catalog-load-note" role="status">Não foi possível atualizar as peças agora. Confirme a disponibilidade pelo direct.</p>}</>
 }

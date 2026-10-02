@@ -79,6 +79,7 @@ export default function SiteMedia({ onNotice }) {
   if (!media) return <p role="status">Carregando as imagens do site…</p>
   return <section className="admin-media" aria-label="Imagens do site">
     <p className="admin-help">São as duas fotos fixas do site. As fotos das peças continuam em “Minhas peças”.</p>
+    <p className="admin-help">As fotos enviadas antes continuam no site como estão. Se quiser a versão mais leve de alguma, escolha a mesma foto aqui e salve de novo.</p>
     <div className="admin-media-grid">
       {siteMediaSlots.map(slot => <Slot key={`${slot}-${media[slot]?.path || 'padrao'}`} slot={slot} current={media[slot] || null} saved={saved[slot] || ''} onSave={save} />)}
     </div>

@@ -2,7 +2,7 @@ import './Hero.css'
 import { instagramDirectUrl } from '../config'
 import useSiteMedia from './useSiteMedia'
 export default function Hero() {
-  const photo = useSiteMedia('abertura')
+  const [photo] = useSiteMedia('abertura')
   return (
     <section id="inicio" className="hero">
       <div className="container hero__inner">
@@ -19,7 +19,7 @@ export default function Hero() {
           </div>
         </div>
         <figure className="hero__photo">
-          <img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} fetchPriority="high" />
+          <img src={photo.src} srcSet={photo.srcSet} sizes={photo.sizes} alt={photo.alt} width={photo.width} height={photo.height} fetchPriority="high" />
           {photo.caption && <figcaption>{photo.caption}</figcaption>}
         </figure>
       </div>

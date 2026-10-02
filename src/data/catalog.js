@@ -2,8 +2,10 @@ import photo1672 from '../assets/images/ritua-1672.webp'
 import photo2200 from '../assets/images/ritua-2200.webp'
 import photo2219 from '../assets/images/ritua-2219.webp'
 import photo2374 from '../assets/images/ritua-2374.webp'
+import photo2374Small from '../assets/images/ritua-2374-560.webp'
 import photo3040 from '../assets/images/ritua-3040.webp'
 import photo9895 from '../assets/images/ritua-9895.webp'
+import photo9895Small from '../assets/images/ritua-9895-700.webp'
 // Keep the supplied photos until the real videos arrive. Import future files from
 // src/assets/videos/ and use media: { type: 'video', src: videoFile, poster: photo }.
 // These photos show groups of pieces, not confirmed individual SKUs. Preserve
@@ -25,7 +27,7 @@ const cuias = [
   },
   {
     id: 'um-canto-do-ritual',
-    media: { type: 'image', src: photo2374, width: 844, height: 1500 },
+    media: { type: 'image', src: photo2374, width: 844, height: 1500, srcSet: `${photo2374Small} 560w, ${photo2374} 844w` },
     gridLabel: 'Um canto do ritual', title: 'Um canto do ritual', tag: 'Cuias · Studio Rituá',
     subtitle: 'Uma cuia rosa entre os objetos da mesa, sob luz colorida.',
     alt: 'Cuia rosa sobre uma bandeja com acessórios, iluminada em rosa e roxo',
@@ -50,7 +52,7 @@ const cuias = [
 const featured = [
   {
     id: 'outras-formas', available: false, category: 'Case',
-    media: { type: 'image', src: photo9895, width: 1125, height: 1500 },
+    media: { type: 'image', src: photo9895, width: 1125, height: 1500, srcSet: `${photo9895Small} 700w, ${photo9895} 1125w` },
     gridLabel: 'Outras formas', title: 'Cases de isqueiro', tag: 'Acessórios · Studio Rituá',
     subtitle: 'Cases de isqueiro com pequenos detalhes em relevo. As unidades desta seleção acabaram.',
     alt: 'Cases de isqueiro coloridos decorados com cogumelos, rostos e personagens sobre uma mesa clara',

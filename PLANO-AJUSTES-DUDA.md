@@ -742,3 +742,17 @@ Todos foram conferidos no código antes de virar correção.
 
 Depois disso, toda referência `arquivo:linha` e toda mensagem citada entre aspas em
 `ERROS-DO-PAINEL.md` foram conferidas por script contra o código: nenhuma diverge.
+
+## 23. Desempenho — aplicação do levantamento de 02/10/2026
+
+O diagnóstico de `LEVANTAMENTO-PERFORMANCE.md` virou código. O detalhamento, os números medidos e o roteiro de conferência ficam lá, na seção "Otimizações aplicadas"; aqui fica só o registro e o que afeta a Duda e o deploy.
+
+**O que mudou no site:** a foto da seção "Feitas à mão" deixou de ser baixada por quem não rola até lá; o ícone da aba virou um ícone de verdade em vez da arte de 829 px; a fonte manuscrita caiu 59%; logotipo e carimbo viraram WebP; as três fotos que o site mostra ganharam uma versão menor para celular; e a consulta do catálogo para enquanto a aba está escondida. Nada de desenho, texto, acento, estoque, reserva, permissão ou migração foi alterado. `npm run test` sai de 27 para 42.
+
+**Pendência que depende da Duda.** As duas fotos que ela já publicou pelo painel somam 1,04 MB e continuam no ar como estão — não mexemos no banco de produção. O preparo de foto agora gera WebP, então **reenviar a mesma foto pelos mesmos campos** aplica a versão mais leve. O painel ganhou uma linha dizendo isso, em "Imagens do site". Enquanto não for feito, a foto da abertura continua sendo o arquivo mais pesado da primeira visita.
+
+**Atenção no deploy (complementa a seção 19.6).** Os nomes dos ícones mudaram. Na `gh-pages` é preciso apagar `favicon-ritua.png` **e** `favicon.png` da raiz publicada, e subir `favicon-32.png` e `apple-touch-icon.png` — este último nunca existiu lá. `CNAME` e `.nojekyll` continuam tendo de ser preservados. Como o HTML é servido com `Cache-Control: max-age=600`, um visitante com a página em cache pode pedir por até dez minutos um ícone que já saiu: é 404 de ícone, não quebra a página.
+
+**Decisão registrada: três fotos de peça continuam no repositório sem aparecer.** `ritua-1672`, `ritua-2200` e `ritua-2219` (674 kB) são importadas por `src/data/catalog.js`, vão para o `dist` e nunca chegam à tela, porque as peças delas ficam fora de `staticProducts`. Não custam nada a quem visita. Apagá-las apagaria junto os textos das peças, escritos à mão — é decisão da loja, não de uma otimização, e por isso ficaram.
+
+**Uma correção do levantamento.** O relatório fala em 25 testes; são 27 desde a leva de 28/09. O número foi corrigido no registro desta etapa, não no diagnóstico original.

@@ -1,6 +1,7 @@
 import { normalizeDetails } from './productDetails.js'
 import { supabase } from './supabase'
 import { categories } from './inventory'
+import { createSignedPhotos, signedSeconds } from './signedPhotos.js'
 const bucket = 'ritua-products'
 function fail(error) {
   if (!error) return
@@ -17,20 +18,32 @@ async function allRows(table, order, publicOnly = false) {
     if (data.length < 200) return all
   }
 }
+async function signPhotos(paths, seconds) {
+  const { data, error } = await supabase.storage.from(bucket).createSignedUrls(paths, seconds)
+  fail(error); if (data.some(p => p.error)) throw new Error('Não foi possível carregar algumas fotos. Tente novamente.')
+  return data
+}
+// Só a vitrine reaproveita a assinatura. No painel, duplicar uma peça rebusca a foto pela
+// própria URL com o cadastro aberto: entregar ali uma URL com menos validade restante
+// transformaria uma duplicação demorada em "Não foi possível ler uma das fotos".
+const reusedUrls = createSignedPhotos(signPhotos)
+const freshUrls = async paths => Object.fromEntries((await signPhotos(paths, signedSeconds)).map(p => [p.path, p.signedUrl]))
 async function load(publicOnly = false) {
   const [rows, photos, events] = await Promise.all([
     allRows('ritua_products', 'created_at', publicOnly), allRows('ritua_product_photos', 'position'),
     publicOnly ? [] : allRows('ritua_stock_events', 'sequence'),
   ])
   const paths = photos.map(p => p.object_path)
-  let signed = []
-  if (paths.length) {
-    const { data, error } = await supabase.storage.from(bucket).createSignedUrls(paths, 900)
-    fail(error); if (data.some(p => p.error)) throw new Error('Não foi possível carregar algumas fotos. Tente novamente.'); signed = data
+  const urls = paths.length ? await (publicOnly ? reusedUrls : freshUrls)(paths) : {}
+  // Uma passada agrupa as fotos por peça, na ordem em que a consulta as trouxe. Antes a
+  // lista inteira era percorrida de novo para cada peça do catálogo.
+  const porPeca = new Map()
+  for (const photo of photos) {
+    const lista = porPeca.get(photo.product_id)
+    if (lista) lista.push(photo); else porPeca.set(photo.product_id, [photo])
   }
-  const urls = Object.fromEntries(signed.map(p => [p.path, p.signedUrl]))
   return { products: rows.map(p => {
-    const productPhotos = photos.filter(photo => photo.product_id === p.id)
+    const productPhotos = porPeca.get(p.id) || []
     return { id: p.id, name: p.name, category: p.category, description: p.description, priceCents: p.price_cents,
       isUnique: p.is_unique, lengthCm: p.length_cm, diameter: p.diameter, diameterUnit: p.diameter_unit,
       model: p.model, line: p.line, compatibleWith: p.compatible_with, includesLighter: p.includes_lighter,

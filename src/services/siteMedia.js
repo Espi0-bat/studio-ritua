@@ -31,7 +31,10 @@ export async function saveSiteMedia(slot, { photo = null, current = null, captio
   if (photo) {
     const blob = await (await fetch(photo.dataUrl)).blob()
     if (blob.size > 5 * 1024 * 1024) throw new Error('A foto ficou grande demais depois do preparo. Tente outra imagem.')
-    path = `${slot}/${crypto.randomUUID()}.jpg`
+    // A extensão segue o formato que o preparo conseguiu gerar: WebP onde o navegador
+    // codifica, JPEG onde não codifica. O bucket aceita os dois desde a criação.
+    const extension = { 'image/webp': 'webp', 'image/jpeg': 'jpg' }[blob.type] || 'jpg'
+    path = `${slot}/${crypto.randomUUID()}.${extension}`
     const { error } = await supabase.storage.from(bucket).upload(path, blob, { upsert: false, contentType: blob.type })
     if (error) throw new Error(siteMediaError(error, 'Não foi possível enviar a foto. Confira a conexão e tente novamente.'))
   }

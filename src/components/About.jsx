@@ -1,13 +1,15 @@
-import handprint from '../assets/images/handprint-ritua.png'
+import handprint from '../assets/images/handprint-ritua.webp'
 import './About.css'
 import useSiteMedia from './useSiteMedia'
 export default function About() {
-  const photo = useSiteMedia('studio')
+  // Esta foto fica muito abaixo da abertura: sem pré-carregamento, quem decide a hora do
+  // download é o `loading="lazy"` do `<img>`, e quem não rola até aqui não baixa foto nenhuma.
+  const [photo, restorePhoto] = useSiteMedia('studio', { preload: false })
   return (
     <section id="sobre" className="about section">
       <div className="container about__inner">
         <figure className="about__photo">
-          <img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" />
+          <img src={photo.src} srcSet={photo.srcSet} sizes={photo.sizes} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" onError={restorePhoto} />
           {photo.caption && <figcaption>{photo.caption}</figcaption>}
         </figure>
         <div className="about__text">

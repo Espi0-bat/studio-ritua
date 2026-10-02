@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { instagramDirectUrl } from '../config'
-import logo from '../assets/logo.png'
+import logo from '../assets/logo.webp'
 import './Navbar.css'
 
 export default function Navbar() {
@@ -26,7 +26,7 @@ export default function Navbar() {
       <nav className="navbar__inner container" aria-label="Navegação principal">
 
         <a href="#inicio" className="navbar__logo brand" onClick={() => setMenuOpen(false)}>
-          <img src={logo} alt="Studio Rituá — início" width="1024" height="1024" />
+          <img src={logo} alt="Studio Rituá — início" width="600" height="600" />
         </a>
 
         <button

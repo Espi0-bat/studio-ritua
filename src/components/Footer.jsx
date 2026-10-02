@@ -1,5 +1,5 @@
 import { instagramUrl, instagramDirectUrl } from '../config'
-import logo from '../assets/logo.png'
+import logo from '../assets/logo.webp'
 import './Footer.css'
 
 // Texto de trocas e devoluções escrito pela Duda, publicado a pedido do usuário com apenas
@@ -52,7 +52,7 @@ export default function Footer() {
       <div className="container footer__inner">
 
         <div className="footer__brand">
-          <a href="#inicio" className="footer__logo brand"><img src={logo} alt="Studio Rituá — início" width="1024" height="1024" loading="lazy" /></a>
+          <a href="#inicio" className="footer__logo brand"><img src={logo} alt="Studio Rituá — início" width="600" height="600" loading="lazy" /></a>
           <p>Piteiras, cases e cuias para o seu ritual.</p>
         </div>
 

@@ -5,6 +5,11 @@ import { groupCatalog, priceLabel, soldByDirect } from '../services/catalogSecti
 import './Gallery.css'
 import ProductCarousel from './ProductCarousel'
 
+// Medidos no CSS desta folha: o card ocupa um terço da faixa no desktop, metade até 900px
+// e 85% do contêiner no celular; a ampliação ocupa 54,5% de um diálogo de no máximo 1000px.
+const cardSizes = '(min-width: 1376px) 409px, (min-width: 901px) calc((100vw - 148px) / 3), (min-width: 601px) calc((100vw - 122px) / 2), calc((100vw - 116px) * 0.85)'
+const detailSizes = '(max-width: 600px) calc(100vw - 40px), (min-width: 1040px) 545px, calc((100vw - 40px) * 0.545)'
+
 function ProductMedia({ product, detail = false, reducedMotion }) {
   const { media, alt } = product
   if (!media) return <div className="gallery__placeholder" role="img" aria-label="Peça sem foto">Foto em breve</div>
@@ -13,7 +18,8 @@ function ProductMedia({ product, detail = false, reducedMotion }) {
       muted loop playsInline controls={detail} preload="metadata" aria-label={alt}
       className={detail ? 'gallery__detail-video' : undefined} />
   }
-  return <img src={media.src} alt={alt} width={media.width} height={media.height}
+  return <img src={media.src} srcSet={media.srcSet} sizes={media.srcSet ? (detail ? detailSizes : cardSizes) : undefined}
+    alt={alt} width={media.width} height={media.height}
     loading={detail ? 'eager' : 'lazy'} />
 }
 
