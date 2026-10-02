@@ -53,7 +53,7 @@ Cuidado com os dois `enable_signup`, verificado na prática em 23/09/2026: o de 
 
 ## Verificação
 
-`npm test` verifica estoque, classificação e a regra de preço da vitrine. O build é `npm run build`, sem `--base`, com `.env.local` configurado — o site é servido na raiz do domínio próprio desde a mudança registrada na seção 19.6 do `PLANO-AJUSTES-DUDA.md`. Testes SQL locais usam PGlite com Auth/Storage simulados; testes reais devem cobrir usuário administrador, visitante, rascunhos/fotos, publicação, concorrência, repetição, reversão e saída. Nunca deixar peças de teste publicadas depois da verificação.
+`npm test` verifica estoque, classificação e a regra de preço da vitrine. O build é `npm run build`, sem `--base`, com `.env.local` configurado — o site é servido na raiz do domínio próprio desde a mudança registrada na seção 19.6 do `PLANO-AJUSTES-DUDA.md`. O catálogo de erros do painel, com as mensagens `P0001` destas funções traduzidas para a conduta de atendimento, está em `ERROS-DO-PAINEL.md`. Testes SQL locais usam PGlite com Auth/Storage simulados; testes reais devem cobrir usuário administrador, visitante, rascunhos/fotos, publicação, concorrência, repetição, reversão e saída. Nunca deixar peças de teste publicadas depois da verificação.
 
 Referências: https://supabase.com/docs/guides/database/functions, https://supabase.com/docs/guides/database/postgres/row-level-security, https://supabase.com/docs/guides/storage/security/access-control, https://supabase.com/docs/guides/auth/auth-email-passwordless.
 

@@ -593,3 +593,152 @@ O rodapé ganhou **"Informações da loja"** (`#loja`), antes de reserva, devolu
 **Pagamento na entrega x reserva.** A FAQ diz que em Boa Vista o pagamento é no momento da entrega; o rodapé diz que o restante da reserva é pago antes do envio ou da retirada. Para uma peça reservada e entregue por motoboy, os dois textos apontam para momentos diferentes. Nenhum dos dois foi alterado por conta própria.
 
 Esta análise é técnica e não substitui parecer jurídico. As três pendências foram enviadas à Duda em 28/09/2026 junto com o aviso das mudanças do painel.
+
+## 22. Prints da Duda de 02/10/2026 — "a foto não tá atualizando"
+
+### 22.1. O relato
+
+Mensagem de 02/10/2026, 00:12: "tava atualizando o catálogo soq tem uma parte q a foto não ta
+atualizando", com print da aba "Imagens do site" mostrando o espaço da abertura, e "as duas daq" —
+abertura e studio. O print foi tirado às 23:11 do dia 01/10, quase uma hora antes da mensagem.
+
+### 22.2. O que o banco mostra
+
+Horários em Brasília, lidos com a chave publicável (comandos na seção 7 de `ERROS-DO-PAINEL.md`):
+
+| Espaço | Arquivo subiu | Linha gravada |
+| --- | --- | --- |
+| studio | 00:05:23 | 00:08:13 |
+| abertura | 00:07:13 | 00:09:39 |
+
+Upload e gravação acontecem na mesma chamada de `saveSiteMedia`, com milissegundos de diferença. A
+distância de quase três minutos entre os dois significa **duas gravações separadas por espaço**: a
+primeira trocou a foto, a segunda regravou o mesmo caminho só com legenda e descrição.
+
+Ou seja, **as duas trocas deram certo**, e deram certo antes da mensagem. As duas fotos estão
+públicas (HTTP 200, `image/jpeg`, 480 KB e 556 KB, 900×1600), o bundle no ar
+(`assets/index-C_OY0JIm.js`) é idêntico ao `dist` local e contém a leitura de `ritua_site_media`, e
+as legendas que ela escreveu estão gravadas — "Cases Rituá · Coleção disponível" e "Criações feitas
+à mão, uma por uma". O site mostra as fotos novas ao recarregar a página.
+
+### 22.3. O erro que deu, e por que não dá para recuperá-lo
+
+A dificuldade dela foi **antes** dessas gravações, na janela entre 23:11 e 00:05. Esse erro não é
+recuperável: o painel não registra falha em lugar nenhum — sem `console.error`, sem tabela de log,
+sem envio externo. A mensagem aparece na tela e se perde ao recarregar.
+
+O que o print permite afirmar é o estado: prévia com a foto antiga, "Esta é a foto publicada hoje." e
+o campo em "nenhum arquivo selecionado". É exatamente o estado em que o painel fica quando a escolha
+do arquivo é recusada — o arquivo é descartado, o campo é limpo (`SiteMedia.jsx:16`) e a mensagem
+nasce abaixo do botão salvar (`SiteMedia.jsx:43`), fora da tela no celular.
+
+Os dois candidatos compatíveis com o print, sem como decidir entre eles depois do fato:
+
+1. **Foto recusada por tipo** — HEIC escolhido por Arquivos em vez da Biblioteca de Fotos
+   (`photos.js:3`). O Safari decodifica HEIC e o preparo converte tudo para JPEG; a recusa é
+   anterior à tentativa, e desnecessária.
+2. **Sessão vencida no upload** — devolve "Não foi possível enviar a foto. Confira a conexão e tente
+   novamente." (`siteMedia.js:35`), que é o mesmo texto para falha de rede e para 403 de permissão.
+   Combina com o celular a 14% de bateria, muito tempo com o painel aberto, e com o fato de ter
+   voltado a funcionar sozinho por volta das 00:05 — que é o que acontece ao recarregar e entrar de novo.
+
+### 22.4. Catálogo de erros
+
+Criado `ERROS-DO-PAINEL.md`: todas as mensagens que o painel pode mostrar — fotos do site, peças e
+estoque, acesso e senha, e as mensagens `P0001` do banco —, com a causa real e a conduta de cada uma,
+as falhas que não mostram mensagem nenhuma, e os comandos de conferência externa usados nesta seção.
+Referenciado em `src/admin/README.md` e `supabase/README.md`.
+
+### 22.5. Lacunas que transformam qualquer falha em "não atualiza"
+
+Levantadas na investigação, listadas como L1 a L6 em `ERROS-DO-PAINEL.md`. Cinco corrigidas em
+02/10/2026 (seção 22.7); L5, o registro de erro, continua aberta.
+
+1. **L1** — no espaço da foto, o erro nasce abaixo do botão salvar e o aviso de sucesso nasce no topo
+   da página. Nos dois casos, longe de onde ela está olhando no celular.
+2. **L2** — salvar sem foto nova anuncia "Imagem do site atualizada", o mesmo texto da troca de foto.
+   Se a escolha do arquivo falhou em silêncio, o painel confirma uma troca que não houve.
+3. **L3** — `src/services/siteMedia.js` não usa o `fail()` de `src/services/liveCatalog.js`, único
+   lugar que traduz `42501`/403 para "Seu acesso não permite esta ação. Entre novamente". Por isso
+   sessão vencida vira recado de conexão.
+4. **L4** — o campo de arquivo é limpo antes do preparo e não há estado "preparando a foto…".
+5. **L5** — nada é registrado, então um próximo relato vai ter a mesma dificuldade de diagnóstico.
+6. **L6** — HEIC é recusado por lista de tipos, sem tentar decodificar.
+
+### 22.6. A avisar à Duda
+
+- As duas fotos **foram trocadas** e estão no ar; é só recarregar o site.
+- No iPhone, escolher por **Biblioteca de Fotos**, não por Arquivos.
+- ~~Se a foto não mudar na prévia depois de escolher, rolar até o fim do bloco.~~ Superado pela 22.7:
+  a mensagem em vermelho agora aparece logo abaixo do campo "Trocar a foto", sem rolar.
+
+### 22.7. Implementado em 02/10/2026
+
+Antes do patch, quatro investigações paralelas sobre o que o código depende. Duas derrubaram
+suposições que estavam na seção 22.5 e teriam produzido correção errada:
+
+- **O erro não estava longe do botão: estava a 12px dele.** Quem estava a cerca de 500px do erro era
+  o campo de arquivo — e é ali que nascem as falhas do preparo. Mover o erro para junto do campo teria
+  só invertido o problema, jogando o erro de gravação para fora da tela de quem acabou de tocar salvar.
+  A correção certa é **separar em dois**, cada erro ancorado na ação que o causou.
+- **Liberar HEIC acrescentando `image/heic` ao `accept` quebraria o que funciona.** No Safari 17 em
+  diante, listar HEIC faz o navegador converter o JPG do usuário **em** HEIC. O `accept` virou
+  `image/*`, com comentário no código nos dois lugares, e a liberação do HEIC veio de outro caminho.
+
+Uma terceira investigação mostrou que o `fail()` de `liveCatalog.js` não podia ser reaproveitado: ele
+importa `./supabase` sem extensão e puxa `createClient`, o que o `node --test` não consegue carregar.
+
+**Mudanças:**
+
+- **`src/services/siteMediaErrors.js` (novo).** Módulo sem import nenhum, só a tradução de erro — por
+  isso testável. Reconhece 401, 403, `42501` e `PGRST301` nos dois formatos que chegam: o storage erra
+  com `status` (número) e `statusCode` (texto) e sem `code`; o PostgREST, com `code` e sem `status`.
+  Quando a sessão morre, o cliente não manda token vencido: passa a mandar a chave pública, e o banco
+  recusa por permissão — por isso a família toda cai em "Entre novamente". (L3)
+- **`src/admin/photos.js`.** A lista de tipos deixou de ser porteiro: barra só o que se declara como
+  não-imagem, e quem decide é tentar decodificar. O `image.onerror`, que já existia, ganhou mensagem
+  específica quando o arquivo é HEIC por tipo ou por extensão. Safari 17+ abre HEIC e o canvas
+  reexporta JPEG; os outros navegadores recebem a instrução de exportar como JPG. Vale também para as
+  fotos das peças, que usam o mesmo preparo. (L6)
+- **`src/admin/SiteMedia.jsx`.** Erro do preparo colado no campo de arquivo, erro da gravação colado no
+  botão. Nome do arquivo guardado em estado, com "Preparando IMG_4821.HEIC…" e depois "Foto escolhida:
+  …". O botão diz o que vai fazer antes do toque — "Salvar a foto nova" ou "Salvar legenda e descrição"
+  — e a confirmação distingue troca de foto de troca de texto. A confirmação mora no componente pai,
+  porque trocar a foto muda o caminho no storage, muda a `key` e remonta o espaço, que perderia o aviso
+  justamente na vez em que ele mais importa. (L1, L2, L4)
+- **`src/admin/Admin.css`.** Estado do espaço e destaque para o aviso do topo, que só reservava altura.
+- **`src/admin/Admin.jsx`.** Mesmo `accept` e mesmo comentário nas fotos das peças.
+- **`tests/siteMedia.test.js` (novo).** Duas provas da tradução de erro. A suíte foi de 25 para 27.
+
+**Verificação:** `npm test` 27/27, `npm run build` sem aviso, `git diff --check` limpo, e o módulo novo
+carrega no Node puro. As telas não têm cobertura automatizada — o projeto não tem runner de DOM, e
+trazer um destoaria de três dependências de runtime.
+
+**Pendente de conferência no aparelho:** que o Safari da Duda abre HEIC depende da versão do iOS dela
+(precisa ser 17 ou mais). Abaixo disso, a correção entrega a mensagem acionável, não o envio direto.
+
+### 22.8. Revisão adversarial do patch
+
+O patch passou por cinco lentes independentes (estado React, regressão nas fotos de peça, tradução de
+erro, celular e acessibilidade, documentação), com dois céticos por achado — um tentando refutar, outro
+tentando reproduzir. Quinze achados, cinco sobreviveram aos dois votos e dois ficaram com voto dividido.
+Todos foram conferidos no código antes de virar correção.
+
+**O que a revisão pegou, e que o patch tinha quebrado:**
+
+- **A prévia passou a mentir.** Ao tirar o ramo `photo ?` da frase embaixo da imagem, a tela ficava
+  mostrando a foto **nova** com a legenda "Esta é a foto publicada hoje." logo abaixo — ou seja,
+  afirmando que a troca já tinha acontecido quando ela ainda nem tinha salvado. Era o mesmo engano da
+  L2, criado em outro lugar enquanto a L2 era corrigida. A frase voltou a depender do mesmo `photo` que
+  escolhe a imagem: "Prévia da foto nova, ainda não publicada."
+- **Confirmação verde ao lado de erro vermelho.** Gravação que falha agora marca o espaço como
+  pendente, o que apaga a confirmação da gravação anterior.
+- **SVG passava pela guarda nova.** Afrouxar a lista de tipos abriu passagem para `image/svg+xml`, que
+  o canvas rasterizaria no tamanho padrão e publicaria como foto ruim, sem erro nenhum. Recusado na
+  entrada.
+- **Três documentos contradiziam o código.** A triagem do catálogo ainda descrevia a L3 antes da
+  correção, e a seção 22.6 mandava a Duda rolar até o fim do bloco sete linhas antes de a 22.7 registrar
+  que isso tinha sido corrigido. Quatro referências `arquivo:linha` apontavam para a linha errada.
+
+Depois disso, toda referência `arquivo:linha` e toda mensagem citada entre aspas em
+`ERROS-DO-PAINEL.md` foram conferidas por script contra o código: nenhuma diverge.

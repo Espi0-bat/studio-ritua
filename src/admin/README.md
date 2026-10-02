@@ -5,7 +5,7 @@
 
 ## Recursos
 
-Cadastro, edição, duplicação, até quatro fotos por peça, rascunhos, publicação, filtros, estoque, reservas, vendas, reposição, retirada, histórico com reversão e exportação JSON. Selecionar o tipo coloca a peça em piteiras, cases ou cuias. JPG/PNG/WebP são reduzidos para até 1.000px antes do envio.
+Cadastro, edição, duplicação, até quatro fotos por peça, rascunhos, publicação, filtros, estoque, reservas, vendas, reposição, retirada, histórico com reversão e exportação JSON. Selecionar o tipo coloca a peça em piteiras, cases ou cuias. Qualquer foto que o navegador consiga abrir — HEIC do iPhone incluído — é reduzida para até 1.000px e reenviada como JPEG. O `accept` é `image/*` e nunca deve listar `image/heic`: o Safari 17 em diante passaria a converter JPG em HEIC.
 
 O painel real atualiza os dados ao abrir, ao voltar à aba e a cada minuto. Conflitos de edição pedem que o cadastro seja reaberto. Operações usam UUID para evitar duplicação em novas tentativas. A exportação é uma cópia de consulta, sem importação automática; os links de foto nela são temporários.
 
@@ -13,7 +13,11 @@ Reservas são contagens por produto, não pedidos individuais. O filtro “Reser
 
 ## Testes
 
-`npm test` e `npm run build -- --base=/studio-ritua/`. A documentação do banco, autorização temporária de testes e remoção de acesso está em `supabase/README.md`.
+`npm test` e `npm run build`, sem `--base` — o site é servido na raiz do domínio próprio, e a base antiga quebraria todos os assets. A documentação do banco, autorização temporária de testes e remoção de acesso está em `supabase/README.md`.
+
+## Quando algo falha
+
+`ERROS-DO-PAINEL.md`, na raiz, cataloga todas as mensagens que o painel pode mostrar — fotos do site, peças e estoque, acesso e senha, e as mensagens do banco —, com a causa real e a conduta de cada uma. Traz também as falhas que não mostram mensagem nenhuma e os comandos de conferência externa, com a chave publicável, para saber se a gravação chegou ao banco. O painel não guarda log: depois do fato, só esses comandos reconstroem o que houve.
 
 
 ## Ficha técnica por tipo

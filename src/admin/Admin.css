@@ -13,6 +13,7 @@
 .admin button:disabled, .admin-modal button:disabled { opacity: .45; cursor: not-allowed; }
 .admin .admin-primary, .admin-modal .admin-primary { background: var(--cherry); color: var(--cream); }
 .admin-notice { min-height: 28px; margin-top: 12px; }
+.admin-notice:not(:empty) { padding: 12px 14px; border-radius: 10px; background: #9dab7f30; border: 1px solid var(--green); }
 .admin-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 12px 0 28px; }
 .admin-stats > div { display: grid; background: #fff8ee; border: 1px solid #7e060725; padding: 20px; border-radius: 16px; }
 .admin-stats strong { font-size: 32px; color: var(--cherry); }
@@ -60,6 +61,9 @@
 .admin-media-slot h2 { font: 400 24px/1.2 var(--font-display); color: var(--cherry); }
 .admin-media-preview { width: 100%; max-height: 340px; object-fit: cover; border-radius: 16px; border: 1px solid #7e060730; }
 .admin-media-slot button { margin-top: 8px; }
+.admin-media-state { margin: 0; font-size: 15px; line-height: 1.5; color: var(--cherry); }
+.admin-media-state[data-kind=ok] { padding: 12px 14px; border-radius: 10px; background: #9dab7f30; border: 1px solid var(--green); color: var(--ink); }
+.admin-media-slot .admin-error { margin: 0; }
 @media (max-width: 850px) { .admin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 700px) { .admin-media-grid { grid-template-columns: 1fr; } }
 @media (max-width: 550px) {

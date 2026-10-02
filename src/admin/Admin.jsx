@@ -74,8 +74,9 @@ function Editor({ initial, onClose, onSave }) {
         <label>Acompanha isqueiro?<select value={form.includesLighter == null ? '' : String(form.includesLighter)} onChange={e => change('includesLighter', e.target.value === '' ? null : e.target.value === 'true')}><option value="">Não informado</option><option value="true">Sim</option><option value="false">Não</option></select></label>
       </>}
       {!form.id && <label>Quantidade inicial<input type="number" min="0" max="9999" step="1" required value={form.quantity} onChange={e => change('quantity', e.target.value)} /></label>}
-      <label>Fotos · até 4<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={upload} /></label>
-      <p className="admin-help">JPG, PNG ou WebP. A primeira foto será a capa.</p>
+      {/* Nunca listar image/heic no accept: o Safari 17 em diante passa a converter o JPG dela em HEIC. */}
+      <label>Fotos · até 4<input type="file" accept="image/*" multiple onChange={upload} /></label>
+      <p className="admin-help">Foto do iPhone serve. A primeira foto será a capa.</p>
       <div className="admin-photos">{form.photos.map((photo, i) => <div key={i}><img src={photo} alt={`Foto ${i + 1} da peça`} /><button type="button" onClick={() => change('photos', form.photos.filter((_, n) => n !== i))}>Remover foto {i + 1}</button></div>)}</div>
       <label className="admin-check"><input type="checkbox" checked={form.published} onChange={e => change('published', e.target.checked)} />Publicar no site</label>
       <p className="admin-help">Desmarcada, a peça fica como rascunho e não aparece no site.</p>
